@@ -1,13 +1,12 @@
 # Contributing to Roots n Routes
 
-Thank you for contributing to the Roots n Routes project! As a small team, clear communication and a consistent workflow are key. This document outlines how we contribute code.
+Thank you for contributing to the Roots n Routes project! As a small team, clear communication and a consistent workflow are key. This document outlines how we contribute to the code.
 
 ## Development Workflow
 
-We use a standard GitHub Flow process. Here's how to contribute:
 
 1.  **Find an Issue:**
-    *   Go to the project's **Issues** tab on GitHub: [Link to Issues/Project Board (replace with your actual link)]. This is our primary task board.
+    *   Go to the project's **Issues** tab on GitHub: [Link to Issues/Project Board](PROJECT_TASKS.md). This is our primary task board.
     *   Look for issues in the `To Do` column that are unassigned.
     *   If you have an idea or find a bug not listed, please create a new issue first to discuss it with the team.
 
@@ -63,10 +62,3 @@ We use a standard GitHub Flow process. Here's how to contribute:
 *   **Code Style:** We use Prettier (auto-formatting) and ESLint (linting). Ensure these checks pass. Configure your editor to format on save if possible.
 *   **Commit Messages:** Use conventional commit messages (e.g., `feat:`, `fix:`, `refactor:`, `chore:`, `docs:`).
 
-## Communication
-
-*   Use GitHub Issues for task-specific discussions.
-*   Use [Your Team's Chat Tool - e.g., Slack, Discord] for general questions or quick discussions.
-*   Don't hesitate to ask questions if you're unsure about anything!
-
-Thank you for your collaboration!

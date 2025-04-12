@@ -50,7 +50,7 @@ The application is structured around several key travel-related features:
 
 ## Contributing
 
-We welcome contributions! Please follow the workflow outlined in our **[Contributing Guide](CONTRIBUTING.md)**.
+Please follow the workflow outlined in our **[Contributing Guide](CONTRIBUTING.md)**.
 
 For details on how to implement features within this codebase (component structure, styling, data handling), please refer to the **[Feature Implementation Guide](FEATURE_IMPLEMENTATION_GUIDE.md)**.
 
