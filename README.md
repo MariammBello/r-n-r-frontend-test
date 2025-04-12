@@ -43,7 +43,7 @@ The application is structured around several key travel-related features:
 
 1.  **Prerequisites:** Node.js, pnpm
 2.  **Clone Repository:** `git clone <repository-url>`
-3.  **Navigate to Directory:** `cd travel-login (1)`
+3.  **Navigate to Directory:** `cd <repository-directory>`
 4.  **Install Dependencies:** `pnpm install`
 5.  **Run Development Server:** `pnpm run dev`
 6.  Open [http://localhost:3000](http://localhost:3000) in your browser.
