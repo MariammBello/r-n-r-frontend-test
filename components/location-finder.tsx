@@ -6,7 +6,7 @@ export default function LocationFinder() {
       <div className="w-[1440px] mx-auto px-[60px]">
         <div className="flex flex-col items-center">
           {/* Title - centered with the specified font */}
-          <h2 className="text-[#0e2f3c] text-2xl font-bold mb-4 text-center font-['Bricolage_Grotesque_24pt',_sans-serif]">
+          <h2 className="text-[#0e2f3c] text-2xl font-bold mt-5 text-center font-['Bricolage_Grotesque_24pt',_sans-serif]">
             Location Finder
           </h2>
 
