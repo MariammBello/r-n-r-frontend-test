@@ -55,8 +55,8 @@ export interface AccommodationCardProps { // Added export
   discount?: number; // Optional
   originalPrice?: number; // Optional
   currentPrice: number;
-  priceType: "Regular" | "Premium"; // Specific types
-  isSelected?: boolean; // Optional selected state
+  priceType: "Regular" | "Premium" | "Deal"; // Added 'Deal' type
+  // isSelected?: boolean; // Removed isSelected prop
   id: string; // Add unique ID prop
   onSelect: (id: string) => void; // Add selection handler prop
 }
@@ -88,17 +88,18 @@ export default function AccommodationCard(props: AccommodationCardProps) { // Ac
     originalPrice,
     currentPrice,
     priceType,
-    isSelected = false, // Default isSelected to false
+    // isSelected = false, // Removed isSelected default
     id, // Destructure id
     onSelect, // Destructure onSelect
   } = props // Use props
 
   return (
-    // Add onClick handler and conditional border
+    // Add onClick handler and hover effect
     <Card
       className={cn(
-        "w-full border border-[#BDBDBD] rounded-lg overflow-hidden flex cursor-pointer transition-all duration-200", // Added cursor and transition
-        isSelected && "border-2 border-[#E09F3E] shadow-md" // Enhanced selected style
+        "w-full border border-[#BDBDBD] rounded-lg overflow-hidden flex cursor-pointer",
+        "transition-all duration-200 ease-in-out", // Transition classes
+        "hover:border-2 hover:border-[#E09F3E] hover:shadow-md" // Apply yellow border and shadow on hover
       )}
       onClick={() => onSelect(id)} // Call onSelect with id when clicked
     >

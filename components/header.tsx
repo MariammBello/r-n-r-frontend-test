@@ -58,6 +58,7 @@ export default function Header() {
                 className="fixed left-0 right-0 bg-white shadow-lg border-t border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50"
                 style={{ top: "77px" }}
               >
+                {/* Restored fixed width w-[1440px] to inner dropdown container */}
                 <div className="mx-auto w-[1440px] px-[60px] py-6">
                   <div className="grid grid-cols-2 gap-x-16 gap-y-8">
                     {solutionsNavItems.map((item) => (
@@ -80,6 +81,7 @@ export default function Header() {
                 className="fixed left-0 right-0 bg-white shadow-lg border-t border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50"
                 style={{ top: "77px" }}
               >
+                {/* Restored fixed width w-[1440px] to inner dropdown container */}
                 <div className="mx-auto w-[1440px] px-[60px] py-6">
                   <div className="grid grid-cols-2 gap-x-16 gap-y-8">
                     {resourcesNavItems.map((item) => (
@@ -102,6 +104,7 @@ export default function Header() {
                 className="fixed left-0 right-0 bg-white shadow-lg border-t border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50"
                 style={{ top: "77px" }}
               >
+                {/* Restored fixed width w-[1440px] to inner dropdown container */}
                 <div className="mx-auto w-[1440px] px-[60px] py-6">
                   <div className="grid grid-cols-2 gap-x-16 gap-y-8">
                     {opportunityNavItems.map((item) => (
