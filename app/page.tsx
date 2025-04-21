@@ -21,7 +21,7 @@ export default function LandingPage() {
   const { isAuthenticated } = useAuth()
 
   return (
-    <div className="relative w-[1440px] mx-auto bg-white overflow-x-hidden">
+    <div className="relative w-full mx-auto bg-white overflow-x-hidden">
       {/* Header at the top of the page */}
       <Header />
 

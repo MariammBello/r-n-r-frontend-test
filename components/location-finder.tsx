@@ -3,7 +3,7 @@ import { Search, MapPin } from "lucide-react"
 export default function LocationFinder() {
   return (
     <section className="w-full pb-10">
-      <div className="w-[1440px] mx-auto px-[60px]">
+      <div className="w-full  mx-auto px-[60px]">
         <div className="flex flex-col items-center">
           {/* Title - centered with the specified font */}
           <h2 className="text-[#0e2f3c] text-2xl font-bold mb-4 text-center font-['Bricolage_Grotesque_24pt',_sans-serif]">
@@ -33,5 +33,5 @@ export default function LocationFinder() {
         </div>
       </div>
     </section>
-  )
+  );
 }

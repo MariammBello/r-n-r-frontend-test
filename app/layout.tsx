@@ -7,7 +7,6 @@ import LoginDemo from "@/components/login-demo"
 export const metadata: Metadata = {
   title: "Roots n Routes - Travel & Explore",
   description: "Discover your roots and plan your routes with our travel platform",
-    generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -17,6 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      
       <body className="bg-gray-50" suppressHydrationWarning={true}> {/* Added suppressHydrationWarning */}
         <AuthProvider>
           {children}
@@ -26,6 +26,3 @@ export default function RootLayout({
     </html>
   )
 }
-
-
-import './globals.css'

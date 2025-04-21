@@ -10,7 +10,7 @@ export default function HeroSlider() {
 
   return (
     <section className="w-full relative mb-10">
-      <div className="w-[1440px] h-[680px] mx-auto relative overflow-hidden">
+      <div className="w-full max-w-[1300px] h-[680px] mx-auto relative overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0">
           <Image
@@ -30,9 +30,11 @@ export default function HeroSlider() {
             Your gateway to authentic African Adventures
           </h1>
           <p className="text-xl md:text-2xl text-white max-w-3xl mb-10">
-            Your all-in-one platform to <span className="font-medium">connect directly</span>,
+            Your all-in-one platform to{" "}
+            <span className="font-medium">connect directly</span>,
             <span className="font-medium"> explore authentically</span> and
-            <span className="font-medium"> travel</span> Africa <span className="font-medium">differently</span>
+            <span className="font-medium"> travel</span> Africa{" "}
+            <span className="font-medium">differently</span>
           </p>
           {isAuthenticated ? (
             <Link
@@ -67,5 +69,5 @@ export default function HeroSlider() {
         </div>
       </div>
     </section>
-  )
+  );
 }

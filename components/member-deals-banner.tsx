@@ -8,7 +8,7 @@ export default function MemberDealsBanner() {
 
   return (
     <section className="w-full bg-white py-4">
-      <div className="w-[1440px] mx-auto px-[60px]">
+      <div className="w-full mx-auto px-[60px]">
         <div className="flex items-center justify-between">
           <h2 className="text-[#5a1700] text-2xl font-medium font-['Bricolage_Grotesque_24pt',_sans-serif]">
             Member deals come with exclusive benefits

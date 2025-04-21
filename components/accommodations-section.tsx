@@ -34,10 +34,12 @@ const accommodationTypes = [
 export default function AccommodationsSection() {
   return (
     <section className="w-full my-[72px]">
-      <div className="w-[1440px] mx-auto px-[60px]">
+      <div className="w-full mx-auto px-[60px]">
         {/* Header with title and "See all listings" button */}
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-[#0e2f3c] text-4xl font-bold">Find Your Perfect Accommodation</h2>
+          <h2 className="text-[#0e2f3c] text-4xl font-bold">
+            Find Your Perfect Accommodation
+          </h2>
           <Link
             href="/accommodation"
             className="px-6 py-3 bg-[#0e2f3c] text-white rounded-md font-medium hover:bg-[#0a2530] transition-colors"
@@ -50,11 +52,19 @@ export default function AccommodationsSection() {
         <div className="relative">
           <div className="flex space-x-6 overflow-hidden">
             {accommodationTypes.slice(0, 3).map((type) => (
-              <div key={type.id} className="flex-none w-[calc(33.333%-16px)] relative rounded-lg overflow-hidden">
+              <div
+                key={type.id}
+                className="flex-none w-[calc(33.333%-16px)] relative rounded-lg overflow-hidden"
+              >
                 {/* Accommodation Image */}
                 <div className="relative h-[400px] w-full">
                   {/* Updated fallback path */}
-                  <Image src={type.image || "/images/placeholder.jpg"} alt={type.name} fill className="object-cover" />
+                  <Image
+                    src={type.image || "/images/placeholder.jpg"}
+                    alt={type.name}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
 
                 {/* Clickable Accommodation Type Name */}
@@ -62,7 +72,9 @@ export default function AccommodationsSection() {
                   href={type.link}
                   className="block absolute bottom-0 left-0 right-0 bg-[#e09f3e] py-4 hover:bg-[#d08f2e] transition-colors"
                 >
-                  <h3 className="text-[#0e2f3c] text-2xl font-bold text-center">{type.name}</h3>
+                  <h3 className="text-[#0e2f3c] text-2xl font-bold text-center">
+                    {type.name}
+                  </h3>
                 </Link>
               </div>
             ))}
@@ -75,5 +87,5 @@ export default function AccommodationsSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -5,7 +5,7 @@ import Link from "next/link"
 const cities = [
   {
     name: "Lagos",
-    image: "/images/lagos.png",
+    image: "/images/city-lagos.png",
     description:
       "Explore the best accommodations, relish in the rich cultural diversity and taste the flavours of Nigeria's biggest tourism hub. Ekaabo!",
   },
@@ -26,10 +26,13 @@ const cities = [
 export default function DestinationsSection() {
   return (
     <section className="w-full my-[72px]">
-      <div className="w-[1440px] mx-auto px-[60px]">
+      <div className="w-full mx-auto px-[60px]">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {cities.map((city, index) => (
-            <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm">
+            <div
+              key={index}
+              className="bg-white rounded-lg overflow-hidden shadow-sm"
+            >
               {/* City Image */}
               <div className="relative h-[240px] w-full">
                 <Image
@@ -42,7 +45,9 @@ export default function DestinationsSection() {
 
               {/* City Content */}
               <div className="p-6">
-                <h3 className="text-[#0e2f3c] text-2xl font-bold mb-2">{city.name}</h3>
+                <h3 className="text-[#0e2f3c] text-2xl font-bold mb-2">
+                  {city.name}
+                </h3>
                 <p className="text-[#4f4f4f] mb-6">{city.description}</p>
                 <Link
                   href={`/destinations/${city.name.toLowerCase()}`}
@@ -56,5 +61,5 @@ export default function DestinationsSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

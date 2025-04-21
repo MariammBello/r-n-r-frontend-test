@@ -42,7 +42,7 @@ const resortDeals = [
 export default function BundleDealsSection() {
   return (
     <section className="w-full my-[72px]">
-      <div className="w-[1440px] mx-auto px-[60px]">
+      <div className="w-full mx-auto px-[60px]">
         {/* Header with title and "See all deals" button */}
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-[#0e2f3c] text-3xl font-bold">Bundle Deals- Ovajara packages</h2>

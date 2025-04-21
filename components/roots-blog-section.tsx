@@ -41,7 +41,7 @@ const blogPosts = [
 export default function RootsBlogSection() {
   return (
     <section className="w-full my-[72px]">
-      <div className="w-[1440px] mx-auto px-[60px]">
+      <div className="w-full mx-auto px-[60px]">
         {/* Blog header */}
         <div className="mb-6">
           <h2 className="text-[#0e2f3c] text-4xl font-bold mb-2">The Roots Blog</h2>

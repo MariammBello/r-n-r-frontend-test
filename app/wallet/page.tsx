@@ -1,7 +1,13 @@
-import Header from "@/components/header"
-import Footer from "@/components/footer"
-import WorkInProgress from "@/components/work-in-progress"
-import { Wallet, CreditCard, Receipt, ArrowUpRight, ArrowDownRight } from "lucide-react"
+import Header from "@/components/header";
+import Footer from "@/components/footer";
+import WorkInProgress from "@/components/work-in-progress";
+import {
+  Wallet,
+  CreditCard,
+  Receipt,
+  ArrowUpRight,
+  ArrowDownRight,
+} from "lucide-react";
 
 export default function WalletPage() {
   return (
@@ -82,5 +88,5 @@ export default function WalletPage() {
       {/* Footer */}
       <Footer />
     </div>
-  )
+  );
 }

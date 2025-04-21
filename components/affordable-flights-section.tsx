@@ -78,8 +78,10 @@ export default function AffordableFlightsSection() {
 
   return (
     <section className="w-full my-[72px]">
-      <div className="w-[1440px] mx-auto px-[60px]">
-        <h2 className="text-[#0e2f3c] text-5xl font-bold mb-8">Affordable Flights to Nigeria</h2>
+      <div className="w-full mx-auto px-[60px]">
+        <h2 className="text-[#0e2f3c] text-5xl font-bold mb-8">
+          Affordable Flights to Nigeria
+        </h2>
 
         {/* Flight cards carousel */}
         <div className="relative mb-6">
@@ -111,9 +113,11 @@ export default function AffordableFlightsSection() {
           >
             See all flights
           </Link>
-          <span className="text-white text-sm pr-8">Terms & Conditions Apply</span>
+          <span className="text-white text-sm pr-8">
+            Terms & Conditions Apply
+          </span>
         </div>
       </div>
     </section>
-  )
+  );
 }

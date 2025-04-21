@@ -51,8 +51,10 @@ export default function ViewedRecently() {
 
   return (
     <section className="w-full my-8">
-      <div className="w-[1440px] mx-auto px-[60px]">
-        <h2 className="text-[#0e2f3c] text-2xl font-bold mb-6">Viewed Recently</h2>
+      <div className="w-full mx-auto px-[60px]">
+        <h2 className="text-[#0e2f3c] text-2xl font-bold mb-6">
+          Viewed Recently
+        </h2>
 
         <div className="relative">
           <div className="flex space-x-6 overflow-hidden">
@@ -71,18 +73,29 @@ export default function ViewedRecently() {
                     </div>
                     <div className="flex-grow">
                       <h3 className="text-[#0e2f3c] font-bold">{item.title}</h3>
-                      {item.location && <p className="text-[#4f4f4f] text-sm">{item.location}</p>}
-                      {item.route && <p className="text-[#4f4f4f] text-sm">{item.route}</p>}
+                      {item.location && (
+                        <p className="text-[#4f4f4f] text-sm">
+                          {item.location}
+                        </p>
+                      )}
+                      {item.route && (
+                        <p className="text-[#4f4f4f] text-sm">{item.route}</p>
+                      )}
 
                       {item.dates && (
                         <div className="text-xs text-[#4f4f4f] mt-1">
                           {item.dates.from} to {item.dates.to}
-                          {item.roundtrip && <span className="ml-2 bg-gray-100 px-2 py-0.5 rounded">Roundtrip</span>}
+                          {item.roundtrip && (
+                            <span className="ml-2 bg-gray-100 px-2 py-0.5 rounded">
+                              Roundtrip
+                            </span>
+                          )}
                         </div>
                       )}
 
                       <div className="text-xs text-[#4f4f4f] mt-1">
-                        {item.travelers} {item.travelers === 1 ? "traveler" : "travelers"}
+                        {item.travelers}{" "}
+                        {item.travelers === 1 ? "traveler" : "travelers"}
                       </div>
                     </div>
                   </div>
@@ -98,5 +111,5 @@ export default function ViewedRecently() {
         </div>
       </div>
     </section>
-  )
+  );
 }

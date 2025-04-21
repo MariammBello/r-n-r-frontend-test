@@ -33,7 +33,7 @@ const experienceTypes = [
 export default function NaijaExperienceSection() {
   return (
     <section className="w-full my-[72px]">
-      <div className="w-[1440px] mx-auto px-[60px]">
+      <div className="w-full mx-auto px-[60px]">
         {/* Header with title and "See Experience" button */}
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-[#0e2f3c] text-4xl font-bold">Explore the Naija Experience</h2>

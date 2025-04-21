@@ -9,7 +9,7 @@ export default function VacationPlanningBanner() {
 
   return (
     <section className="w-full bg-[#0e2f3c] py-6">
-      <div className="w-[1440px] mx-auto px-[60px]">
+      <div className="w-full mx-auto px-[60px]">
         <div className="flex items-center justify-between">
           {/* Left side with logo and text */}
           <div className="flex items-center">

@@ -3,7 +3,7 @@ import { Calendar } from "lucide-react"
 export default function BookingSection() {
   return (
     <section className="w-full my-[72px]">
-      <div className="w-[1440px] mx-auto px-[60px]">
+      <div className="w-full mx-auto px-[60px]">
         {/* Heading */}
         <h2 className="text-[#0e2f3c] text-4xl font-bold mb-8 text-center">
           Your Next Naija Destination is Here: BOOK NOW!
@@ -14,7 +14,10 @@ export default function BookingSection() {
           <form className="flex flex-wrap items-end gap-4">
             {/* Destination */}
             <div className="flex-1 min-w-[200px]">
-              <label htmlFor="destination" className="block text-[#4f4f4f] font-medium mb-2">
+              <label
+                htmlFor="destination"
+                className="block text-[#4f4f4f] font-medium mb-2"
+              >
                 Your Destination
               </label>
               <input
@@ -27,7 +30,10 @@ export default function BookingSection() {
 
             {/* From Date */}
             <div className="flex-1 min-w-[200px]">
-              <label htmlFor="fromDate" className="block text-[#4f4f4f] font-medium mb-2">
+              <label
+                htmlFor="fromDate"
+                className="block text-[#4f4f4f] font-medium mb-2"
+              >
                 From
               </label>
               <div className="relative">
@@ -37,13 +43,19 @@ export default function BookingSection() {
                   placeholder="DD - MM - YYYY"
                   className="w-full h-[50px] px-4 pr-10 rounded-md border border-[#bdbdbd] focus:outline-none focus:border-[#0e2f3c]"
                 />
-                <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 text-[#0e2f3c]" size={20} />
+                <Calendar
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#0e2f3c]"
+                  size={20}
+                />
               </div>
             </div>
 
             {/* To Date */}
             <div className="flex-1 min-w-[200px]">
-              <label htmlFor="toDate" className="block text-[#4f4f4f] font-medium mb-2">
+              <label
+                htmlFor="toDate"
+                className="block text-[#4f4f4f] font-medium mb-2"
+              >
                 To
               </label>
               <div className="relative">
@@ -53,13 +65,19 @@ export default function BookingSection() {
                   placeholder="DD - MM - YYYY"
                   className="w-full h-[50px] px-4 pr-10 rounded-md border border-[#bdbdbd] focus:outline-none focus:border-[#0e2f3c]"
                 />
-                <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 text-[#0e2f3c]" size={20} />
+                <Calendar
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#0e2f3c]"
+                  size={20}
+                />
               </div>
             </div>
 
             {/* Number of Travelers */}
             <div className="flex-1 min-w-[200px]">
-              <label htmlFor="travelers" className="block text-[#4f4f4f] font-medium mb-2">
+              <label
+                htmlFor="travelers"
+                className="block text-[#4f4f4f] font-medium mb-2"
+              >
                 Number of Travelers
               </label>
               <input
@@ -80,5 +98,5 @@ export default function BookingSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
