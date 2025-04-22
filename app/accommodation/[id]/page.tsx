@@ -9,8 +9,8 @@ import ImageGallery from "@/components/ImageGallery";
 import BookingCard from "@/components/BookingCard";
 import AboutIntroSection from "@/components/AboutIntroSection";
 import DescriptionSection from "@/components/DescriptionSection";
-import ThingsToKnowSection from "@/components/ThingsToKnowSection";
 import HostDetailsCard from "@/components/HostDetailsCard";
+import AboutHostSection from "@/components/AboutHostSection"; // Import the new component
 import PoliciesList from "@/components/PoliciesList";
 import MapSection from "@/components/MapSection";
 import ReviewsSummary from "@/components/ReviewsSummary";
@@ -185,13 +185,17 @@ export default async function AccommodationDetailPage({ params }: { params: { id
 
                   <Separator className="bg-gray-200" />
 
-                  {/* Use the DescriptionSection component */}
-                  <DescriptionSection description={accommodation.description} />
+                  {/* Use the updated DescriptionSection component */}
+                  <DescriptionSection
+                    description={accommodation.description}
+                    // Pass placeholder props for now - replace with actual data later
+                    // checkInOut={accommodation.checkInOutInfo}
+                    // accessMethods={accommodation.accessInfo}
+                    // petPolicy={accommodation.petsInfo}
+                    // childPolicy={accommodation.childrenInfo}
+                  />
 
-                  <Separator className="bg-gray-200" />
-
-                  {/* Use the ThingsToKnowSection component */}
-                  <ThingsToKnowSection />
+                  {/* Removed Separator and ThingsToKnowSection */}
                 </div>
               </TabsContent>
 
@@ -201,6 +205,11 @@ export default async function AccommodationDetailPage({ params }: { params: { id
                    host={accommodation.host}
                    totalReviews={reviewsData.totalReviews} // Pass total reviews
                    renderStars={renderStars} // Pass the helper function
+                 />
+                 {/* Add AboutHostSection below the card */}
+                 <AboutHostSection
+                   hostName={accommodation.host.name}
+                   // aboutText={accommodation.host.about} // Pass actual about text later
                  />
               </TabsContent>
 
@@ -216,8 +225,9 @@ export default async function AccommodationDetailPage({ params }: { params: { id
 
               {/* --- Reviews Tab --- */}
               <TabsContent value="reviews" className="mt-0 pt-6">
+                 {/* Removed overall rating text div that was here */}
                  <ReviewsSummary
-                   overallRating={reviewsData.overallRating}
+                   overallRating={reviewsData.overallRating} // Prop still passed, though not used in component currently
                    totalReviews={reviewsData.totalReviews}
                    ratingBreakdown={reviewsData.ratingBreakdown}
                  />

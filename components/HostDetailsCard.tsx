@@ -2,61 +2,74 @@ import React from 'react'; // Import React for JSX types
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui/card"; // Keep Card import
 import { CheckCircle2, Building2, MessageSquare, Star } from "lucide-react";
-import { Accommodation } from "@/types/accommodation"; // Assuming Host type is part of Accommodation
+import { Accommodation } from "@/types/accommodation";
 
 interface HostDetailsCardProps {
-  host: Accommodation['host']; // Use the Host type from Accommodation
+  host: Accommodation['host'];
   totalReviews: number;
-  renderStars: (rating: number, size?: number) => React.ReactNode[]; // Use React.ReactNode[]
+  renderStars: (rating: number, size?: number) => React.ReactNode[];
 }
 
 const HostDetailsCard: React.FC<HostDetailsCardProps> = ({ host, totalReviews, renderStars }) => {
-  // Placeholder rating for the host card itself (could be passed as prop if dynamic)
-  const hostCardRating = 4.8;
+  // Placeholder rating matching Figma badge
+  const hostCardRating = 9.7 / 2; // Rating out of 5 for stars helper
 
   return (
-    <Card className="border border-gray-200 rounded-lg p-6 flex flex-col md:flex-row gap-6 items-start">
-      <Avatar className="h-24 w-24 flex-shrink-0 bg-gray-100 rounded-lg"> {/* Adjusted styling */}
-        <AvatarImage src={host.avatar} alt={`${host.name} avatar`} />
-        <AvatarFallback><Building2 size={48} className="text-gray-400" /></AvatarFallback>
-      </Avatar>
-      <div className="flex-1">
-         <div className="flex flex-col sm:flex-row justify-between items-start mb-3">
-            {/* Host Name & Info */}
-            <div className="mb-3 sm:mb-0">
-               <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-manrope font-extrabold text-xl text-[#0E2F3C]">Hosted by {host.name}</h3>
-                  {host.isVerified && <CheckCircle2 size={18} className="text-[#27AE60]" />}
-               </div>
-               {/* Placeholder Host Details */}
-               <div className="flex items-center gap-x-2 flex-wrap text-sm text-[#4F4F4F]">
-                 <span>Response rate: 100%</span> {/* Placeholder */}
-                 <span className="hidden sm:inline">•</span>
-                 <span>Experience: 20 years</span> {/* Placeholder */}
-               </div>
-            </div>
-            {/* Host Rating - Adjusted styling */}
-            <div className="text-center border border-gray-200 p-3 rounded-lg flex-shrink-0">
-               <p className="font-bold text-xl text-[#0E2F3C]">{(hostCardRating * 2).toFixed(1)}</p> {/* Example calculation */}
-               <div className="flex justify-center my-1">{renderStars(hostCardRating, 14)}</div>
-               <Link href="#reviews" className="text-xs text-[#4F4F4F] underline hover:text-[#0E2F3C]">See all {totalReviews} Reviews</Link>
-            </div>
-         </div>
-         {/* About Host */}
-         <p className="font-manrope text-base text-[#4F4F4F] mb-5 leading-relaxed"> {/* Increased margin */}
-            {host.name} is a Superhost who she is known for offering a great stay experience to guests. Her apartment comes highly recommended {/* Placeholder */}
-         </p>
-         {/* Host Action Buttons - Adjusted styling */}
-         <div className="flex flex-col sm:flex-row gap-3">
-            <Button className="bg-[#E09F3E] text-[#0E2F3C] hover:bg-[#d08f2e] rounded-md px-5 py-2.5 h-auto font-semibold text-base">View Host Profile</Button>
-            <Button variant="outline" className="border-[#0E2F3C] text-[#0E2F3C] hover:bg-gray-50 flex items-center gap-2 rounded-md px-5 py-2.5 h-auto font-semibold text-base">
-               <MessageSquare size={18} /> Message Host
-               <span className="text-xs text-[#828282] font-normal">(Typically responds in 10 mins)</span> {/* Placeholder */}
-            </Button>
-         </div>
+    // Updated Card styling: padding, border color, flex row, justify-between, items-center
+    <Card className="border border-[#BDBDBD] rounded-lg p-[18px_32px] flex flex-row justify-between items-center gap-6"> {/* Use gap-6 based on visual */}
+
+      {/* Left Section: Avatar + Info */}
+      <div className="flex items-center gap-2"> {/* Use gap-2 based on Figma Frame 642 */}
+        <Avatar className="h-[72px] w-[72px] flex-shrink-0 bg-[#BDBDBD] rounded-full"> {/* Adjusted size & color */}
+          <AvatarImage src={host.avatar} alt={`${host.name} avatar`} />
+          {/* Using Building2 icon as fallback, ensure it's imported */}
+          <AvatarFallback><Building2 size={36} className="text-white" /></AvatarFallback>
+        </Avatar>
+        <div className="flex flex-col">
+          <div className="flex items-center gap-1 mb-0.5"> {/* Reduced gap */}
+            {/* Updated text styles */}
+            <h3 className="font-manrope font-extrabold text-lg text-[#0E2F3C]">Hosted by {host.name}</h3>
+            {host.isVerified && <CheckCircle2 size={16} className="text-[#27AE60]" />} {/* Adjusted size */}
+          </div>
+          {/* Added Hospitality Hero text */}
+          <p className="font-manrope text-base text-[#27AE60] mb-1">Hospitality Hero</p>
+          {/* Updated text styles & content */}
+          <p className="font-manrope text-base font-extrabold text-[#4F4F4F] leading-tight"> {/* Use leading-tight */}
+            Response rate: 100%<br />
+            Experience: 20 years
+          </p>
+        </div>
       </div>
+
+      {/* Middle Section: Rating */}
+      <div className="flex flex-col items-center gap-4"> {/* Use gap-4 based on Figma */}
+        {/* Rating Badge */}
+        <div className="bg-[#1D1D1D] text-white rounded-lg w-[50px] h-[50px] flex items-center justify-center">
+          <span className="font-manrope font-extrabold text-sm">{(hostCardRating * 2).toFixed(1)}</span>
+        </div>
+        {/* Stars */}
+        <div className="flex items-center gap-1">{renderStars(hostCardRating, 16)}</div> {/* Adjusted size */}
+        {/* Reviews Link */}
+        <Link href="#reviews" className="font-manrope text-sm font-extrabold text-[#4F4F4F] underline hover:text-[#0E2F3C]">
+          See all {totalReviews} Reviews
+        </Link>
+      </div>
+
+      {/* Right Section: Buttons */}
+      <div className="flex flex-col items-center gap-2"> {/* Stack buttons vertically, gap-2 */}
+        <Button className="bg-[#E09F3E] text-[#0E2F3C] hover:bg-[#d08f2e] rounded-lg px-4 py-3 h-auto font-manrope font-extrabold text-base w-[280px]"> {/* Match Figma style */}
+          View Host Profile
+        </Button>
+        <Button variant="outline" className="bg-[#0E2F3C] text-white hover:bg-[#1a4a5f] border-[#0E2F3C] rounded-lg px-4 py-3 h-auto font-manrope font-extrabold text-base w-[280px]"> {/* Match Figma style */}
+          Message Host
+        </Button>
+        <p className="font-manrope text-base text-[#4F4F4F] mt-1"> {/* Added margin-top */}
+          Typically responds in 10 mins
+        </p>
+      </div>
+      {/* Removed About Host paragraph */}
     </Card>
   );
 };

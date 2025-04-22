@@ -10,22 +10,25 @@ import {
   Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // Import Alert
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Keep Card import for other sections
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// Removed Tabs imports as they are no longer used for payment methods
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton"; // For loading state
+import { Skeleton } from "@/components/ui/skeleton";
+import BookingSummaryCard from "@/components/BookingSummaryCard";
+import InfoPrompt from "@/components/InfoPrompt";
+import PaymentStatusDialog from "@/components/PaymentStatusDialog"; // Import the new component
 
 // Icons
 import {
-  Home, ChevronRight, Star, Info, Edit, ShoppingCart, AlertCircle, ShieldCheck, // Added AlertCircle, ShieldCheck
-  LucideIcon, // Base type
+  Home, ChevronRight, Star, Info, Edit, ShoppingCart, AlertCircle, ShieldCheck,
+  LucideIcon, // Keep LucideIcon if used elsewhere or in types
 } from "lucide-react";
 
 import { fetchAccommodationById } from "@/lib/api/accommodations";
@@ -43,6 +46,7 @@ export default function BookingPage() {
   // Form States (basic placeholders)
   const [couponCode, setCouponCode] = useState("");
   const [paymentOption, setPaymentOption] = useState("pay_now");
+  const [paymentMethod, setPaymentMethod] = useState("saved_card"); // State for saved/new card
   const [cardName, setCardName] = useState("");
   const [cardNumber, setCardNumber] = useState("");
   const [expiryMonth, setExpiryMonth] = useState("");
@@ -62,6 +66,11 @@ export default function BookingPage() {
   const [receiveMessages, setReceiveMessages] = useState(true);
   const [specialRequest, setSpecialRequest] = useState("");
 
+  // State for Payment Status Dialog
+  const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<'success' | 'error'>('success');
+  const [receiptDetails, setReceiptDetails] = useState<any>(null); // Use 'any' for now, replace with ReceiptDetails type later
+
 
   useEffect(() => {
     if (id) {
@@ -71,7 +80,6 @@ export default function BookingPage() {
         try {
           const data = await fetchAccommodationById(id);
           if (!data) {
-            // This won't work directly in client component, handle via state/redirect
             setError("Accommodation not found.");
             setAccommodation(null);
           } else {
@@ -94,11 +102,7 @@ export default function BookingPage() {
 
   // Handle case where ID is missing or accommodation not found after fetch attempt
    if (!isLoading && error) {
-     // TODO: Implement a more user-friendly error display or redirect
      if (error === "Accommodation not found.") {
-        // Simulate notFound() behavior for client components if needed,
-        // maybe redirect or show a specific "Not Found" component.
-        // For now, just display the error.
         return <div className="min-h-screen flex items-center justify-center">{error}</div>;
      }
      return <div className="min-h-screen flex items-center justify-center">Error: {error}</div>;
@@ -135,18 +139,41 @@ export default function BookingPage() {
   // Should not happen if error handling above is correct, but satisfy TS
   if (!accommodation) {
      return <div className="min-h-screen flex items-center justify-center">Something went wrong.</div>;
-  }
+   }
 
-  // --- Calculation placeholders (same as detail page for now) ---
-  const nights = 5;
-  const subtotal = accommodation.currentPrice * nights;
-  const cautionDeposit = 100000;
-  const serviceCharge = 30000;
-  const vat = 22500;
-  const totalCost = subtotal + cautionDeposit + serviceCharge + vat;
-  // --- End Calculations ---
+   // --- Calculation placeholders ---
+   const nights = 5; // Example
+   const subtotal = accommodation.currentPrice * nights;
+   const cautionDeposit = 100000; // Example
+   const serviceCharge = 10000; // Example from Figma summary card
+   const vat = 22500; // Example
+   const totalCost = subtotal + cautionDeposit + serviceCharge + vat;
+   // --- End Calculations ---
 
-  return (
+   // --- Placeholder Submit Handler ---
+   const handleSendRequest = () => {
+     // Simulate API call & response
+     console.log("Sending booking request...");
+     // Example: Set state for success dialog
+     setReceiptDetails({
+       amount: totalCost,
+       refNumber: '000085752257', // Example
+       vendorName: accommodation.host.name, // Example
+       paymentMethod: 'Debit card', // Example
+       paymentTime: new Date().toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'medium' }), // Example
+       sender: 'Sarah Philips' // Example - get from auth context later
+     });
+     setPaymentStatus('success');
+     setIsStatusDialogOpen(true);
+
+     // Example for error state (uncomment to test)
+     // setPaymentStatus('error');
+     // setIsStatusDialogOpen(true);
+   };
+   // --- End Placeholder Submit Handler ---
+
+
+   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
       <Header />
@@ -172,7 +199,6 @@ export default function BookingPage() {
              <BreadcrumbSeparator><ChevronRight className="h-4 w-4 text-[#828282]" /></BreadcrumbSeparator>
              <BreadcrumbItem>
                <BreadcrumbLink asChild>
-                 {/* Link back to the specific accommodation detail page */}
                  <Link href={`/accommodation/${id}`} className="text-[#828282] hover:text-[#0e2f3c]">
                    {accommodation.propertyName}
                  </Link>
@@ -190,7 +216,6 @@ export default function BookingPage() {
         <Alert variant="destructive" className="mb-6 bg-red-50 border-red-200 text-red-700">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle className="font-semibold">To complete your booking, please fill all compulsory fields with the correct details</AlertTitle>
-          {/* <AlertDescription> Optional description </AlertDescription> */}
         </Alert>
         {/* Alert END */}
 
@@ -200,92 +225,12 @@ export default function BookingPage() {
 
             {/* --- Confirm Booking Section --- */}
             <h2 className="text-2xl font-bold text-[#0E2F3C] font-bricolage">Confirm your booking</h2>
-            <Card className="border border-[#E0E0E0] rounded-lg shadow-sm">
-              <CardContent className="p-6 flex flex-col gap-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-lg font-semibold text-[#0E2F3C]">{accommodation.propertyName}</h3>
-                    <p className="text-sm text-[#4F4F4F]">You are renting the entire unit</p> {/* Placeholder */}
-                  </div>
-                  <div className="text-right">
-                     <div className="flex items-center gap-1">
-                        <Star size={16} className="text-[#E09F3E] fill-[#E09F3E]" />
-                        <span className="font-manrope text-sm font-bold text-[#0E2F3C]">{accommodation.rating.toFixed(1)}</span>
-                        <span className="font-manrope text-sm text-[#4F4F4F]">({accommodation.reviews} reviews)</span>
-                     </div>
-                     <span className="text-xs text-green-600 font-semibold">{accommodation.host.title}</span> {/* Placeholder */}
-                  </div>
-                </div>
-
-                <Separator className="bg-[#E0E0E0]" />
-
-                {/* Dates, Guests, Units */}
-                <div className="grid grid-cols-3 gap-4 text-sm">
-                   <div>
-                      <Label className="font-semibold text-[#0E2F3C] block mb-1">Dates</Label>
-                      <p className="text-[#4F4F4F]">Friday, Feb 14 - Monday, Feb 17</p> {/* Placeholder */}
-                   </div>
-                    <div>
-                      <Label className="font-semibold text-[#0E2F3C] block mb-1">No. of Guests</Label>
-                      <p className="text-[#4F4F4F]">2 Adults, 3 Children, 1 Infant</p> {/* Placeholder */}
-                   </div>
-                    <div>
-                      <Label className="font-semibold text-[#0E2F3C] block mb-1">No. of Units</Label>
-                      <p className="text-[#4F4F4F]">1 Unit</p> {/* Placeholder */}
-                   </div>
-                   <Button variant="ghost" size="sm" className="text-[#E09F3E] hover:bg-transparent hover:text-[#E09F3E] p-0 justify-self-end col-start-1"><Edit size={14} className="mr-1"/> Edit</Button>
-                   <Button variant="ghost" size="sm" className="text-[#E09F3E] hover:bg-transparent hover:text-[#E09F3E] p-0 justify-self-end col-start-2"><Edit size={14} className="mr-1"/> Edit</Button>
-                   <Button variant="ghost" size="sm" className="text-[#E09F3E] hover:bg-transparent hover:text-[#E09F3E] p-0 justify-self-end col-start-3"><Edit size={14} className="mr-1"/> Edit</Button>
-                </div>
-
-                <Separator className="bg-[#E0E0E0]" />
-
-                {/* Price Details */}
-                <div>
-                   <h4 className="font-semibold text-[#0E2F3C] mb-2">Price details</h4>
-                   <div className="flex flex-col gap-1 font-manrope text-sm text-[#4F4F4F]">
-                      <div className="flex justify-between">
-                         <span>₦{accommodation.currentPrice.toLocaleString()} x {nights} nights</span>
-                         <span>₦{subtotal.toLocaleString()}</span>
-                      </div>
-                       <div className="flex justify-between">
-                         <span>Caution Deposit <Info size={12} className="inline text-[#828282]"/></span>
-                         <span>₦{cautionDeposit.toLocaleString()}</span>
-                      </div>
-                       <div className="flex justify-between">
-                         <span>Service charge <Info size={12} className="inline text-[#828282]"/></span>
-                         <span>₦{serviceCharge.toLocaleString()}</span>
-                      </div>
-                       <div className="flex justify-between">
-                         <span>VAT <Info size={12} className="inline text-[#828282]"/></span>
-                         <span>₦{vat.toLocaleString()}</span>
-                      </div>
-                   </div>
-                </div>
-
-                 {/* Coupon Code */}
-                 <div className="flex gap-2 items-center pt-2">
-                    <Input
-                      placeholder="Coupon code"
-                      value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value)}
-                      className="border-[#828282]"
-                    />
-                    <Button variant="outline" className="border-[#0E2F3C] text-[#0E2F3C] hover:bg-gray-50">Apply</Button>
-                 </div>
-
-                 <Separator className="bg-[#E0E0E0]" />
-
-                 {/* Total */}
-                 <div className="flex justify-between items-center font-manrope text-base font-bold text-[#0E2F3C]">
-                    <span>Total</span>
-                    <div className="flex items-center gap-1">
-                       <ShoppingCart size={16}/>
-                       <span>₦{totalCost.toLocaleString()}</span>
-                    </div>
-                 </div>
-              </CardContent>
-            </Card>
+            <BookingSummaryCard
+              accommodation={accommodation}
+              couponCode={couponCode}
+              onCouponChange={setCouponCode}
+              onApplyCoupon={() => { /* Placeholder */ alert("Apply Coupon Clicked"); }}
+            />
             {/* --- End Confirm Booking Section --- */}
 
             {/* --- Payment Options --- */}
@@ -305,136 +250,156 @@ export default function BookingPage() {
             {/* --- End Payment Options --- */}
 
             {/* --- Payment Methods --- */}
-             <div>
-               <h2 className="text-2xl font-bold text-[#0E2F3C] font-bricolage mb-4">Payment methods</h2>
-               <Tabs defaultValue="card" className="w-full">
-                  <TabsList className="border-b border-[#E0E0E0] rounded-none justify-start bg-transparent p-0 h-auto mb-6">
-                     <TabsTrigger value="card" className="data-[state=active]:border-b-2 data-[state=active]:border-[#0E2F3C] data-[state=active]:text-[#0E2F3C] rounded-none pb-2 px-1 mr-6 text-[#4F4F4F] font-semibold">Card</TabsTrigger>
-                     <TabsTrigger value="wallet" className="data-[state=active]:border-b-2 data-[state=active]:border-[#0E2F3C] data-[state=active]:text-[#0E2F3C] rounded-none pb-2 px-1 mr-6 text-[#4F4F4F] font-semibold" disabled>Wallet</TabsTrigger>
-                     <TabsTrigger value="bank" className="data-[state=active]:border-b-2 data-[state=active]:border-[#0E2F3C] data-[state=active]:text-[#0E2F3C] rounded-none pb-2 px-1 mr-6 text-[#4F4F4F] font-semibold" disabled>Bank Transfer</TabsTrigger>
-                     <TabsTrigger value="third_party" className="data-[state=active]:border-b-2 data-[state=active]:border-[#0E2F3C] data-[state=active]:text-[#0E2F3C] rounded-none pb-2 px-1 text-[#4F4F4F] font-semibold" disabled>Third Party</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="card" className="mt-0 pt-4 space-y-6">
-                     {/* Saved Card Placeholder */}
-                     <div className="flex items-center justify-between border border-[#E0E0E0] rounded-lg p-3 text-sm text-[#4F4F4F]">
-                        <span>VISA ****6614</span>
-                        <RadioGroup defaultValue="saved_card"> <RadioGroupItem value="saved_card" id="saved_card" /> </RadioGroup>
-                     </div>
-                     <Button variant="link" className="p-0 h-auto text-[#E09F3E] font-semibold">+ Add New Card</Button>
+            <div className="border border-[#BDBDBD] rounded-lg p-[48px_60px] space-y-8"> {/* Container styles */}
+              <h2 className="text-2xl font-bold text-[#0E2F3C] font-bricolage">Payment methods</h2>
 
-                     {/* Card Form */}
-                     <div className="space-y-4">
-                        <div>
-                           <Label htmlFor="cardName" className="block text-sm font-medium text-[#4F4F4F] mb-1">Name on Card*</Label>
-                           <Input id="cardName" value={cardName} onChange={e => setCardName(e.target.value)} className="border-[#828282]" />
-                        </div>
-                         <div>
-                           <Label htmlFor="cardNumber" className="block text-sm font-medium text-[#4F4F4F] mb-1">Debit/Credit card number*</Label>
-                           <Input id="cardNumber" placeholder="0000 0000 0000 0000" value={cardNumber} onChange={e => setCardNumber(e.target.value)} className="border-red-500" /> {/* Example error state */}
-                        </div>
-                        <div className="grid grid-cols-3 gap-4">
-                           <div>
-                              <Label htmlFor="expiryMonth" className="block text-sm font-medium text-[#4F4F4F] mb-1">Expiration date*</Label>
-                              <Select value={expiryMonth} onValueChange={setExpiryMonth}>
-                                 <SelectTrigger id="expiryMonth" className="border-[#828282]"> <SelectValue placeholder="Month" /> </SelectTrigger>
-                                 <SelectContent>
-                                    {/* Populate Months */}
-                                    {[...Array(12)].map((_, i) => <SelectItem key={i+1} value={String(i+1).padStart(2, '0')}>{(i+1).toString().padStart(2, '0')}</SelectItem>)}
-                                 </SelectContent>
-                              </Select>
-                           </div>
-                           <div>
-                              <Label htmlFor="expiryYear" className="block text-sm font-medium text-[#4F4F4F] mb-1 invisible">Year</Label> {/* Invisible label for alignment */}
-                              <Select value={expiryYear} onValueChange={setExpiryYear}>
-                                 <SelectTrigger id="expiryYear" className="border-[#828282]"> <SelectValue placeholder="Year" /> </SelectTrigger>
-                                 <SelectContent>
-                                    {/* Populate Years */}
-                                    {[...Array(10)].map((_, i) => <SelectItem key={i} value={String(new Date().getFullYear() + i)}>{new Date().getFullYear() + i}</SelectItem>)}
-                                 </SelectContent>
-                              </Select>
-                           </div>
-                            <div>
-                              <Label htmlFor="cvv" className="block text-sm font-medium text-[#4F4F4F] mb-1">CVV/Security code*</Label>
-                              <Input id="cvv" value={cvv} onChange={e => setCvv(e.target.value)} className="border-[#828282]" />
-                           </div>
-                        </div>
-                         <div className="flex items-center space-x-2">
-                           <Checkbox id="rememberCard" checked={rememberCard} onCheckedChange={(checked) => setRememberCard(Boolean(checked))} />
-                           <Label htmlFor="rememberCard" className="text-sm font-medium text-[#4F4F4F] peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Remember this card for future use</Label>
-                         </div>
-                     </div>
+              {/* Saved Card / Add New Card Selection */}
+              <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-6">
+                {/* Saved Card Option */}
+                <Label htmlFor="saved_card" className="flex items-center justify-between border border-[#E0E0E0] rounded-lg p-4 cursor-pointer has-[:checked]:border-[#E09F3E] has-[:checked]:border-2">
+                  <div className="flex items-center gap-3">
+                    {/* Placeholder for VISA logo */}
+                    <span className="font-bold text-blue-700">VISA</span>
+                    <span className="font-manrope text-base text-[#282828]">****6614</span>
+                  </div>
+                  <RadioGroupItem value="saved_card" id="saved_card" />
+                </Label>
 
-                     {/* Billing Address */}
-                     <div className="space-y-4 pt-4">
-                        <h3 className="text-lg font-semibold text-[#0E2F3C]">Billing Address</h3>
-                         <div>
-                           <Label htmlFor="streetAddress" className="block text-sm font-medium text-[#4F4F4F] mb-1">Street Address*</Label>
-                           <Input id="streetAddress" value={streetAddress} onChange={e => setStreetAddress(e.target.value)} className="border-[#828282]" />
-                        </div>
-                         <div>
-                           <Label htmlFor="aptSuite" className="block text-sm font-medium text-[#4F4F4F] mb-1">Apt. or Suite Number</Label>
-                           <Input id="aptSuite" value={aptSuite} onChange={e => setAptSuite(e.target.value)} className="border-[#828282]" />
-                        </div>
-                         <div className="grid grid-cols-2 gap-4">
-                             <div>
-                               <Label htmlFor="city" className="block text-sm font-medium text-[#4F4F4F] mb-1">City*</Label>
-                               <Input id="city" value={city} onChange={e => setCity(e.target.value)} className="border-red-500" /> {/* Example error state */}
-                            </div>
-                             <div>
-                               <Label htmlFor="state" className="block text-sm font-medium text-[#4F4F4F] mb-1">State*</Label>
-                               <Input id="state" value={state} onChange={e => setState(e.target.value)} className="border-[#828282]" />
-                            </div>
-                         </div>
-                         <div className="grid grid-cols-2 gap-4">
-                             <div>
-                               <Label htmlFor="postcode" className="block text-sm font-medium text-[#4F4F4F] mb-1">Postcode*</Label>
-                               <Input id="postcode" value={postcode} onChange={e => setPostcode(e.target.value)} className="border-[#828282]" />
-                            </div>
-                             <div>
-                               <Label htmlFor="country" className="block text-sm font-medium text-[#4F4F4F] mb-1">Country*</Label>
-                               <Select value={country} onValueChange={setCountry}>
-                                 <SelectTrigger id="country" className="border-[#828282]"> <SelectValue placeholder="Country" /> </SelectTrigger>
-                                 <SelectContent>
-                                    <SelectItem value="Nigeria">Nigeria</SelectItem>
-                                    {/* Add other countries */}
-                                 </SelectContent>
-                              </Select>
-                            </div>
-                         </div>
-                     </div>
-                  </TabsContent>
-                  {/* Add TabsContent for other payment methods if needed */}
-               </Tabs>
+                {/* Add New Card Option */}
+                <Label htmlFor="add_new_card" className="flex items-center gap-3 cursor-pointer">
+                   <RadioGroupItem value="add_new_card" id="add_new_card" />
+                   <span className="font-manrope text-base text-[#282828]">Add New Card</span>
+                </Label>
+              </RadioGroup>
+
+              {/* Conditional Card Form */}
+              {paymentMethod === 'add_new_card' && (
+                <div className="space-y-8 pt-4"> {/* Card Form */}
+                  {/* Name on Card */}
+                  <div>
+                    <Label htmlFor="cardName" className="block font-manrope text-xl font-extrabold text-[#0E2F3C] mb-2">Name on Card*</Label>
+                    <Input id="cardName" value={cardName} onChange={e => setCardName(e.target.value)} className="border-[#BDBDBD] rounded p-3 h-auto text-base placeholder:text-[#828282]" placeholder="Sarah Philips"/>
+                  </div>
+                  {/* Card Number */}
+                  <div>
+                    <Label htmlFor="cardNumber" className="block font-manrope text-xl font-extrabold text-[#0E2F3C] mb-2">Debit/Credit card number*</Label>
+                    <Input id="cardNumber" placeholder="0000  0000  0000  0000" value={cardNumber} onChange={e => setCardNumber(e.target.value)} className="border-[#BDBDBD] rounded p-3 h-auto text-base placeholder:text-[#828282]" />
+                  </div>
+                  {/* Expiry & CVV Row */}
+                  <div className="flex items-end gap-8">
+                    {/* Expiry Date */}
+                    <div className="flex-1">
+                       <Label htmlFor="expiryMonth" className="block font-manrope text-xl font-extrabold text-[#EB5757] mb-2">Expiration date*</Label>
+                       <div className="flex gap-2">
+                          <Select value={expiryMonth} onValueChange={setExpiryMonth}>
+                             <SelectTrigger id="expiryMonth" className="border-[#BDBDBD] rounded p-3 h-auto text-base text-[#828282]"> <SelectValue placeholder="Month" /> </SelectTrigger>
+                             <SelectContent>
+                                {[...Array(12)].map((_, i) => <SelectItem key={i+1} value={String(i+1).padStart(2, '0')}>{(i+1).toString().padStart(2, '0')}</SelectItem>)}
+                             </SelectContent>
+                          </Select>
+                          <Select value={expiryYear} onValueChange={setExpiryYear}>
+                             <SelectTrigger id="expiryYear" className="border-[#BDBDBD] rounded p-3 h-auto text-base text-[#828282]"> <SelectValue placeholder="Year" /> </SelectTrigger>
+                             <SelectContent>
+                                {[...Array(10)].map((_, i) => <SelectItem key={i} value={String(new Date().getFullYear() + i)}>{new Date().getFullYear() + i}</SelectItem>)}
+                             </SelectContent>
+                          </Select>
+                       </div>
+                    </div>
+                    {/* CVV */}
+                    <div className="w-[206px]">
+                       <Label htmlFor="cvv" className="block font-manrope text-xl font-extrabold text-[#EB5757] mb-2">CVV/Security code*</Label>
+                       <Input id="cvv" value={cvv} onChange={e => setCvv(e.target.value)} className="border-[#BDBDBD] rounded p-3 h-auto text-base" />
+                    </div>
+                  </div>
+                  {/* Remember Card */}
+                  <div className="flex items-center gap-2">
+                    <Checkbox id="rememberCard" checked={rememberCard} onCheckedChange={(checked) => setRememberCard(Boolean(checked))} className="data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600" />
+                    <Label htmlFor="rememberCard" className="font-manrope text-base text-[#0E2F3C] peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Remember this card for future use</Label>
+                  </div>
+                </div>
+              )}
+
+              {/* Billing Address */}
+              <div className="space-y-8 pt-4">
+                 <h3 className="font-bricolage text-3xl font-bold text-[#0E2F3C]">Billing Address</h3>
+                 {/* Street Address */}
+                 <div>
+                   <Label htmlFor="streetAddress" className="block font-manrope text-xl font-extrabold text-[#0E2F3C] mb-2">Street Address*</Label>
+                   <Input id="streetAddress" value={streetAddress} onChange={e => setStreetAddress(e.target.value)} className="border-[#BDBDBD] rounded p-3 h-auto text-base" />
+                 </div>
+                 {/* Apt/Suite */}
+                 <div>
+                   <Label htmlFor="aptSuite" className="block font-manrope text-xl font-extrabold text-[#0E2F3C] mb-2">Apt. or Suite Number</Label>
+                   <Input id="aptSuite" value={aptSuite} onChange={e => setAptSuite(e.target.value)} className="border-[#BDBDBD] rounded p-3 h-auto text-base" />
+                 </div>
+                 {/* City/State Row */}
+                 <div className="flex items-center gap-[88px]">
+                     <div className="flex-1">
+                       <Label htmlFor="city" className="block font-manrope text-xl font-extrabold text-[#0E2F3C] mb-2">City*</Label>
+                       <Input id="city" value={city} onChange={e => setCity(e.target.value)} className="border-[#BDBDBD] rounded p-3 h-auto text-base" />
+                    </div>
+                     <div className="flex-1">
+                       <Label htmlFor="state" className="block font-manrope text-xl font-extrabold text-[#0E2F3C] mb-2">State*</Label>
+                       <Input id="state" value={state} onChange={e => setState(e.target.value)} className="border-[#BDBDBD] rounded p-3 h-auto text-base" />
+                    </div>
+                 </div>
+                 {/* Postcode/Country Row */}
+                 <div className="flex items-center gap-[88px]">
+                     <div className="flex-1">
+                       <Label htmlFor="postcode" className="block font-manrope text-xl font-extrabold text-[#0E2F3C] mb-2">Postcode*</Label>
+                       <Input id="postcode" value={postcode} onChange={e => setPostcode(e.target.value)} className="border-[#BDBDBD] rounded p-3 h-auto text-base" />
+                    </div>
+                     <div className="flex-1">
+                       <Label htmlFor="country" className="block font-manrope text-xl font-extrabold text-[#0E2F3C] mb-2">Country*</Label>
+                       <Select value={country} onValueChange={setCountry}>
+                         <SelectTrigger id="country" className="border-[#BDBDBD] rounded p-3 h-auto text-base text-[#828282]"> <SelectValue placeholder="Country" /> </SelectTrigger>
+                         <SelectContent>
+                            <SelectItem value="Nigeria">Nigeria</SelectItem>
+                            {/* Add other countries */}
+                         </SelectContent>
+                      </Select>
+                    </div>
+                 </div>
+              </div>
             </div>
             {/* --- End Payment Methods --- */}
 
+
              {/* --- Who is checking in? --- */}
-             <div className="space-y-4">
-                <h2 className="text-2xl font-bold text-[#0E2F3C] font-bricolage">Who is checking in?</h2>
-                 <div>
-                   <Label htmlFor="travelerName" className="block text-sm font-medium text-[#4F4F4F] mb-1">Traveler Name*</Label>
-                   <Input id="travelerName" value={travelerName} onChange={e => setTravelerName(e.target.value)} className="border-red-500" /> {/* Example error state */}
-                </div>
-                 <div>
-                   <Label htmlFor="emailAddress" className="block text-sm font-medium text-[#4F4F4F] mb-1">Email address*</Label>
-                   <Input id="emailAddress" type="email" value={emailAddress} onChange={e => setEmailAddress(e.target.value)} className="border-[#828282]" />
-                </div>
-                 <div>
-                   <Label htmlFor="phoneNumber" className="block text-sm font-medium text-[#4F4F4F] mb-1">Phone number*</Label>
-                   <div className="flex gap-2">
-                      <Select value={phoneCode} onValueChange={setPhoneCode}>
-                         <SelectTrigger id="phoneCode" className="w-[80px] border-[#828282]"> <SelectValue /> </SelectTrigger>
-                         <SelectContent>
-                            <SelectItem value="+234">+234</SelectItem>
-                            {/* Add other codes */}
-                         </SelectContent>
-                      </Select>
-                      <Input id="phoneNumber" type="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} className="border-[#828282] flex-1" />
+             {/* Added border, padding, adjusted spacing */}
+             <div className="border border-[#BDBDBD] rounded-lg p-[40px_60px] space-y-6">
+                {/* Heading style updated */}
+                <h2 className="text-3xl font-bold text-[#0E2F3C] font-bricolage">Who is checking in?</h2>
+                 {/* Form fields with updated styles */}
+                 <div className="space-y-6"> {/* Inner div for form field spacing */}
+                   <div>
+                     <Label htmlFor="travelerName" className="block font-manrope text-xl font-extrabold text-[#0E2F3C] mb-2">Traveler Name*</Label>
+                     <Input id="travelerName" value={travelerName} onChange={e => setTravelerName(e.target.value)} className="border-[#BDBDBD] rounded p-3 h-auto text-base placeholder:text-[#828282]" placeholder="Sarah Philips"/>
                    </div>
-                </div>
-                 <div className="flex items-center space-x-2">
-                   <Checkbox id="receiveMessages" checked={receiveMessages} onCheckedChange={(checked) => setReceiveMessages(Boolean(checked))} />
-                   <Label htmlFor="receiveMessages" className="text-sm font-medium text-[#4F4F4F] peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Receive text messages about this trip. Messages and data rates apply</Label>
+                   <div>
+                     <Label htmlFor="emailAddress" className="block font-manrope text-xl font-extrabold text-[#0E2F3C] mb-2">Email address*</Label>
+                     <Input id="emailAddress" type="email" value={emailAddress} onChange={e => setEmailAddress(e.target.value)} className="border-[#BDBDBD] rounded p-3 h-auto text-base" />
+                   </div>
+                   <div>
+                     <Label htmlFor="phoneNumber" className="block font-manrope text-xl font-extrabold text-[#0E2F3C] mb-2">Phone number*</Label>
+                     <div className="flex gap-6"> {/* Match Figma gap */}
+                        <Select value={phoneCode} onValueChange={setPhoneCode}>
+                           {/* Adjusted width and styles */}
+                           <SelectTrigger id="phoneCode" className="w-[159px] border-[#BDBDBD] rounded p-3 h-auto text-base text-[#828282]"> <SelectValue /> </SelectTrigger>
+                           <SelectContent>
+                              <SelectItem value="+234">+234</SelectItem>
+                              {/* Add other codes */}
+                           </SelectContent>
+                        </Select>
+                        {/* Adjusted width and styles */}
+                        <Input id="phoneNumber" type="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} className="border-[#BDBDBD] rounded p-3 h-auto text-base flex-1" />
+                     </div>
+                   </div>
+                   <div className="flex items-center gap-2"> {/* Match Figma gap */}
+                     <Checkbox id="receiveMessages" checked={receiveMessages} onCheckedChange={(checked) => setReceiveMessages(Boolean(checked))} className="data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600" /> {/* Green check */}
+                     {/* Match Figma text style */}
+                     <Label htmlFor="receiveMessages" className="font-manrope text-base text-[#0E2F3C] peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Receive text messages about this trip. Messages and data rates apply</Label>
+                   </div>
                  </div>
              </div>
              {/* --- End Who is checking in? --- */}
@@ -485,7 +450,11 @@ export default function BookingPage() {
                  <p className="font-manrope text-sm text-[#4F4F4F]">
                     I also agree that Roots 'n' Routes can charge my payment method if I am responsible for any damage and I agree to pay the total amount shown if the Host accepts my booking request.
                  </p>
-                 <Button className="w-full bg-[#0E2F3C] text-white font-manrope font-extrabold hover:bg-[#1c4a5f] py-3 text-base rounded-lg mt-4">
+                 {/* Updated Button to trigger dialog */}
+                 <Button
+                   onClick={handleSendRequest}
+                   className="w-full bg-[#0E2F3C] text-white font-manrope font-extrabold hover:bg-[#1c4a5f] py-3 text-base rounded-lg mt-4"
+                 >
                     Send Request
                  </Button>
                  <ul className="list-disc pl-5 space-y-1 font-manrope text-xs text-[#828282] pt-2">
@@ -498,14 +467,12 @@ export default function BookingPage() {
           </div>
           {/* --- End Left Column --- */}
 
-          {/* --- Right Column (Ad Banner) --- */}
+          {/* --- Right Column (Info Prompts) --- */}
           <div className="col-span-1">
-             <div className="sticky top-6 bg-[#0E2F3C] rounded-lg p-6 text-white text-center">
-                <Image src="/images/placeholder-user.jpg" alt="Ad banner image" width={100} height={100} className="mx-auto rounded-full mb-4" /> {/* Placeholder Image */}
-                <h3 className="text-lg font-semibold mb-2">Advertise Here!</h3>
-                <p className="text-sm mb-4">This is an ad space for vendors who wish to advertise their business/service offerings on our platform</p>
-                <p className="text-sm mb-4">You can contact us to advertise your business and service offerings here</p>
-                <Button className="bg-[#E09F3E] text-[#0E2F3C] hover:bg-[#d08f2e] font-semibold">Button Sample</Button>
+             <div className="sticky top-6 space-y-4"> {/* Add spacing between prompts */}
+                <InfoPrompt text="You have good taste. Pay now before someone else grabs this opportunity." />
+                <InfoPrompt text="30% discount applied" />
+                {/* Removed Advertise Here banner */}
              </div>
           </div>
           {/* --- End Right Column --- */}
@@ -513,8 +480,20 @@ export default function BookingPage() {
         </div>
       </main>
 
-      {/* Footer */}
-      <Footer />
-    </div>
-  );
+       {/* Footer */}
+       <Footer />
+
+       {/* Payment Status Dialog */}
+       {receiptDetails && (
+         <PaymentStatusDialog
+           isOpen={isStatusDialogOpen}
+           onOpenChange={setIsStatusDialogOpen}
+           status={paymentStatus}
+           details={receiptDetails}
+           onDone={() => console.log("Dialog Done")} // Placeholder action
+           onRetry={() => console.log("Dialog Retry")} // Placeholder action
+         />
+       )}
+     </div>
+   );
 }

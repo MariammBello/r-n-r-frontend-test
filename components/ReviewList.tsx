@@ -1,71 +1,92 @@
+import React from 'react'; // Import React for React.ReactNode
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+// import { Badge } from "@/components/ui/badge"; // No longer using Badge for rating
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui/card"; // Keep Card import
 import { Star } from "lucide-react";
 import { cn } from '@/lib/utils';
 
 interface IndividualReview {
   name: string;
   location: string;
-  rating: number;
-  scoreType: string;
+  rating: number; // Assuming this is out of 10
+  scoreType: string; // e.g., "Excellent", "Average", "Poor"
   date: string;
   text: string;
-  avatar: string;
+  avatar: string; // URL or path to avatar image
+  stayDuration?: string; // Optional, e.g., "Stayed 7 nights"
 }
 
 interface ReviewListProps {
   reviews: IndividualReview[];
   totalReviews: number;
-  renderStars: (rating: number, size?: number) => React.ReactNode[]; // Pass renderStars
+  renderStars: (rating: number, size?: number) => React.ReactNode[];
 }
+
+// Helper to determine text color based on scoreType
+const getScoreColor = (scoreType: string) => {
+  switch (scoreType) {
+    case 'Excellent': return 'text-green-600'; // Or Figma's green if defined
+    case 'Average': return 'text-yellow-600'; // Or Figma's yellow/orange
+    case 'Poor': return 'text-red-600'; // Or Figma's red
+    default: return 'text-[#0E2F3C]'; // Default color
+  }
+};
 
 const ReviewList: React.FC<ReviewListProps> = ({ reviews, totalReviews, renderStars }) => {
   return (
-    <>
-      {/* Individual Reviews - Adjusted styling */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-8"> {/* Increased gap */}
+    <div className="mt-8"> {/* Add margin top to separate from summary */}
+      {/* Individual Reviews Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[70px] gap-y-10 mb-10"> {/* Match Figma gaps */}
         {reviews.slice(0, 4).map((review, index) => ( // Show first 4
-           <Card key={index} className="border-none p-0">
-              <div className="flex items-center justify-between mb-3">
-                 <div className="flex items-center gap-3">
-                    <Avatar className="h-11 w-11"> {/* Slightly larger avatar */}
+           // Use div instead of Card for simpler structure matching Figma
+           <div key={index} className="flex flex-col gap-4"> {/* Vertical gap within review */}
+              {/* Top Row: Avatar, Name/Location, Rating/Score */}
+              <div className="flex items-start justify-between gap-4"> {/* Align items start */}
+                 {/* Left: Avatar + Name/Location */}
+                 <div className="flex items-center gap-4"> {/* Gap between avatar and text */}
+                    <Avatar className="h-14 w-14"> {/* Match Figma size */}
                        <AvatarImage src={review.avatar} alt={review.name} />
+                       {/* Use first letter as fallback */}
                        <AvatarFallback>{review.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div>
-                       <p className="font-manrope font-semibold text-base text-[#0E2F3C]">{review.name}</p>
-                       <p className="font-manrope text-xs text-[#828282]">{review.location}</p>
+                       {/* Match Figma text styles */}
+                       <p className="font-manrope font-extrabold text-xl text-[#0E2F3C]">{review.name}</p>
+                       <p className="font-manrope text-lg text-[#0E2F3C]">{review.location}</p>
                     </div>
                  </div>
-                 <Badge variant={review.scoreType === 'Excellent' ? 'default' : review.scoreType === 'Average' ? 'secondary' : 'destructive'}
-                        className={cn("px-2.5 py-1 text-xs font-semibold rounded-md", // Adjusted padding/rounding
-                                     review.scoreType === 'Excellent' && 'bg-green-100 text-green-800', // Darker text
-                                     review.scoreType === 'Average' && 'bg-yellow-100 text-yellow-800', // Darker text
-                                     review.scoreType === 'Poor' && 'bg-red-100 text-red-800' // Darker text
-                        )}>
-                    {review.rating}/10 {review.scoreType}
-                 </Badge>
+                 {/* Right: Rating + Score Type */}
+                 <div className="text-right">
+                    {/* Match Figma text styles */}
+                    <p className="font-manrope font-extrabold text-xl text-[#0E2F3C]">{review.rating}/10</p>
+                    <p className={`font-manrope font-extrabold text-xl ${getScoreColor(review.scoreType)}`}>{review.scoreType}</p>
+                 </div>
               </div>
-              <div className="flex items-center gap-2 mb-2">
-                 <div className="flex items-center gap-0.5">{renderStars(review.rating / 2, 14)}</div>
-                 <span className="text-sm text-[#828282]">•</span>
-                 <span className="font-manrope text-sm text-[#828282]">Stayed 7 nights</span> {/* Placeholder */}
+              {/* Middle Row: Stars + Stay Duration */}
+              <div className="flex items-center gap-[22px]"> {/* Match Figma gap */}
+                 {/* Render stars (rating is out of 10, convert to 5) */}
+                 <div className="flex items-center gap-1">{renderStars(review.rating / 2, 20)}</div> {/* Adjust size */}
+                 {/* Match Figma text style */}
+                 <span className="font-manrope text-lg text-[#828282]">{review.stayDuration || "Stayed 7 nights"}</span>
               </div>
-              <p className="font-manrope text-sm text-[#4F4F4F] mb-2 line-clamp-4 leading-relaxed">{review.text}</p>
-              <p className="font-manrope text-xs text-[#828282]">{review.date}</p>
-           </Card>
+              {/* Bottom: Review Text & Date */}
+              {/* Match Figma text styles */}
+              <p className="font-manrope text-lg text-[#0E2F3C] leading-normal">{review.text}</p>
+              <p className="font-manrope text-xl font-extrabold text-[#828282]">{review.date}</p>
+           </div>
         ))}
       </div>
-      {/* Action Buttons - Adjusted styling */}
+      {/* Action Buttons & Link */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-        <Button variant="secondary" className="bg-[#0E2F3C] text-white hover:bg-[#1a4a5f] rounded-md px-6 py-2.5 text-base font-semibold w-full sm:w-auto">Show all {totalReviews} reviews</Button>
-        <Button className="bg-[#E09F3E] text-[#0E2F3C] hover:bg-[#d08f2e] rounded-md px-6 py-2.5 text-base font-semibold w-full sm:w-auto">Share your reviews</Button>
+        {/* Match Figma button styles */}
+        <Button variant="secondary" className="bg-[#0E2F3C] text-white hover:bg-[#1a4a5f] rounded-lg px-4 py-3 h-auto font-manrope font-extrabold text-base w-full sm:w-[280px]">Show all {totalReviews} reviews</Button>
+        <Button className="bg-[#E09F3E] text-[#0E2F3C] hover:bg-[#d08f2e] rounded-lg px-4 py-3 h-auto font-manrope font-extrabold text-base w-full sm:w-[280px]">Share your reviews</Button>
       </div>
-      <Link href="#" className="block text-center mt-6 font-manrope text-sm text-[#4F4F4F] underline hover:text-[#0E2F3C]">Learn how reviews work</Link>
-    </>
+      {/* Match Figma link style */}
+      <Link href="#" className="block text-center mt-6 font-manrope text-base text-[#4F4F4F] underline hover:text-[#0E2F3C]">Learn how reviews work</Link>
+    </div>
   );
 };
 
