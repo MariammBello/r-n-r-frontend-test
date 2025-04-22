@@ -3,8 +3,13 @@ import { mockAccommodations } from '@/lib/mock-data/accommodations';
 import {
   Accommodation,
   FetchAccommodationsParams,
-  FetchAccommodationsResponse
+  FetchAccommodationsResponse,
+  ReviewsData, // Import Review types
+  FaqItem // Import FaqItem type
 } from '@/types/accommodation';
+import { mockReviewsData } from '@/lib/mock-data/reviews'; // Import mock review data
+import { mockPolicies } from '@/lib/mock-data/policies'; // Import mock policy data
+import { mockFaqs } from '@/lib/mock-data/faqs'; // Import mock faq data
 
 const SIMULATED_DELAY_MS = 300; // Simulate network latency
 
@@ -82,6 +87,51 @@ export const fetchAccommodationById = async (
     setTimeout(() => {
       const accommodation = mockAccommodations.find(acc => acc.id === id) || null;
       resolve(accommodation);
+    }, SIMULATED_DELAY_MS);
+  });
+};
+
+/**
+ * Simulates fetching reviews data for a specific accommodation ID.
+ * Note: Currently returns the same mock data regardless of ID.
+ */
+export const fetchReviewsByAccommodationId = async (
+  id: string
+): Promise<ReviewsData> => {
+  console.log(`Simulating fetch reviews for ID: ${id}`); // Log which ID is requested
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(mockReviewsData); // Return the imported mock data
+    }, SIMULATED_DELAY_MS);
+  });
+};
+
+/**
+ * Simulates fetching policies for a specific accommodation ID.
+ * Note: Currently returns the same mock data regardless of ID.
+ */
+export const fetchPoliciesByAccommodationId = async (
+  id: string
+): Promise<string[]> => {
+   console.log(`Simulating fetch policies for ID: ${id}`);
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(mockPolicies); // Return the imported mock data
+    }, SIMULATED_DELAY_MS);
+  });
+};
+
+/**
+ * Simulates fetching FAQs for a specific accommodation ID.
+ * Note: Currently returns the same mock data regardless of ID.
+ */
+export const fetchFaqsByAccommodationId = async (
+  id: string
+): Promise<FaqItem[]> => {
+   console.log(`Simulating fetch FAQs for ID: ${id}`);
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(mockFaqs); // Return the imported mock data
     }, SIMULATED_DELAY_MS);
   });
 };

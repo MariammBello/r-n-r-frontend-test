@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from 'react';
-import { useParams, notFound } from 'next/navigation';
+import { useState, useEffect, Suspense, useMemo } from 'react'; // Added Suspense, useMemo
+import { useParams, notFound, useSearchParams } from 'next/navigation'; // Added useSearchParams
 import Link from "next/link";
 import Image from "next/image";
 import Header from "@/components/header";
@@ -34,16 +34,51 @@ import {
 import { fetchAccommodationById } from "@/lib/api/accommodations";
 import { Accommodation } from "@/types/accommodation";
 import { cn } from '@/lib/utils';
+import { parseISO, format } from 'date-fns'; // Import parseISO and format here
 
-export default function BookingPage() {
+// Define the structure for booking details read from URL
+interface BookingDetails {
+  checkIn: string | null;
+  checkOut: string | null;
+  guests: number;
+  units: number;
+  nights: number;
+  subtotal: number;
+  totalCost: number;
+  caution: number;
+  service: number;
+  vat: number;
+}
+
+// Main component content moved into a separate component to use Suspense
+function BookingPageContent() {
   const params = useParams();
+  const searchParamsHook = useSearchParams(); // Use the hook here
   const id = params.id as string;
 
+  // State for fetched accommodation data
   const [accommodation, setAccommodation] = useState<Accommodation | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingData, setIsLoadingData] = useState(true); // Renamed loading state
   const [error, setError] = useState<string | null>(null);
 
-  // Form States (basic placeholders)
+  // Read booking details from URL parameters
+  const bookingDetails = useMemo((): BookingDetails => {
+    return {
+      checkIn: searchParamsHook.get('checkIn'),
+      checkOut: searchParamsHook.get('checkOut'),
+      guests: parseInt(searchParamsHook.get('guests') || '1', 10),
+      units: parseInt(searchParamsHook.get('units') || '1', 10),
+      nights: parseInt(searchParamsHook.get('nights') || '0', 10),
+      subtotal: parseFloat(searchParamsHook.get('subtotal') || '0'),
+      totalCost: parseFloat(searchParamsHook.get('totalCost') || '0'),
+      caution: parseFloat(searchParamsHook.get('caution') || '0'),
+      service: parseFloat(searchParamsHook.get('service') || '0'),
+      vat: parseFloat(searchParamsHook.get('vat') || '0'),
+    };
+  }, [searchParamsHook]);
+
+
+  // Form States (remain the same)
   const [couponCode, setCouponCode] = useState("");
   const [paymentOption, setPaymentOption] = useState("pay_now");
   const [paymentMethod, setPaymentMethod] = useState("saved_card"); // State for saved/new card
@@ -72,10 +107,11 @@ export default function BookingPage() {
   const [receiptDetails, setReceiptDetails] = useState<any>(null); // Use 'any' for now, replace with ReceiptDetails type later
 
 
+  // Effect to load accommodation data
   useEffect(() => {
     if (id) {
       const loadAccommodation = async () => {
-        setIsLoading(true);
+        setIsLoadingData(true); // Use renamed state
         setError(null);
         try {
           const data = await fetchAccommodationById(id);
@@ -90,26 +126,34 @@ export default function BookingPage() {
           setError("Failed to load accommodation details.");
           setAccommodation(null);
         } finally {
-          setIsLoading(false);
+          setIsLoadingData(false); // Use renamed state
         }
       };
       loadAccommodation();
     } else {
       setError("Accommodation ID is missing.");
-      setIsLoading(false);
+      setIsLoadingData(false); // Use renamed state
     }
   }, [id]);
 
   // Handle case where ID is missing or accommodation not found after fetch attempt
-   if (!isLoading && error) {
+   if (!isLoadingData && error) { // Use renamed state
      if (error === "Accommodation not found.") {
-        return <div className="min-h-screen flex items-center justify-center">{error}</div>;
+        // Use Next.js notFound() for better 404 handling
+        notFound();
      }
-     return <div className="min-h-screen flex items-center justify-center">Error: {error}</div>;
+     // Generic error display
+     return <div className="min-h-screen flex items-center justify-center">Error loading booking details: {error}</div>;
    }
 
-  // Show loading skeletons while fetching
-  if (isLoading) {
+   // Handle case where booking details are missing from URL (basic check)
+   if (!bookingDetails.checkIn || !bookingDetails.checkOut || bookingDetails.nights <= 0) {
+     return <div className="min-h-screen flex items-center justify-center">Error: Missing booking details. Please select dates on the previous page.</div>;
+   }
+
+
+  // Show loading skeletons while fetching accommodation data
+  if (isLoadingData) { // Use renamed state
     return (
       <div className="min-h-screen bg-white">
         <Header />
@@ -136,34 +180,79 @@ export default function BookingPage() {
     );
   }
 
-  // Should not happen if error handling above is correct, but satisfy TS
+  // Accommodation data should be loaded by now if no error occurred
   if (!accommodation) {
-     return <div className="min-h-screen flex items-center justify-center">Something went wrong.</div>;
+     // This case should ideally be covered by error handling or loading state
+     return <div className="min-h-screen flex items-center justify-center">Loading accommodation details...</div>;
    }
 
-   // --- Calculation placeholders ---
-   const nights = 5; // Example
-   const subtotal = accommodation.currentPrice * nights;
-   const cautionDeposit = 100000; // Example
-   const serviceCharge = 10000; // Example from Figma summary card
-   const vat = 22500; // Example
-   const totalCost = subtotal + cautionDeposit + serviceCharge + vat;
+   // --- Use bookingDetails from URL instead of placeholders ---
+   // const nights = bookingDetails.nights;
+   // const subtotal = bookingDetails.subtotal;
+   // const cautionDeposit = bookingDetails.caution;
+   // const serviceCharge = bookingDetails.service;
+   // const vat = bookingDetails.vat;
+   // const totalCost = bookingDetails.totalCost;
    // --- End Calculations ---
 
-   // --- Placeholder Submit Handler ---
+   // --- Updated Submit Handler ---
    const handleSendRequest = () => {
-     // Simulate API call & response
-     console.log("Sending booking request...");
-     // Example: Set state for success dialog
-     setReceiptDetails({
-       amount: totalCost,
-       refNumber: '000085752257', // Example
-       vendorName: accommodation.host.name, // Example
-       paymentMethod: 'Debit card', // Example
-       paymentTime: new Date().toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'medium' }), // Example
-       sender: 'Sarah Philips' // Example - get from auth context later
+     // --- Basic Form Validation ---
+     const requiredFields: { field: string; value: string; label: string }[] = [
+       { field: 'travelerName', value: travelerName, label: 'Traveler Name' },
+       { field: 'emailAddress', value: emailAddress, label: 'Email Address' },
+       { field: 'phoneNumber', value: phoneNumber, label: 'Phone Number' },
+       { field: 'streetAddress', value: streetAddress, label: 'Billing Street Address' },
+       { field: 'city', value: city, label: 'Billing City' },
+       { field: 'state', value: state, label: 'Billing State' },
+       { field: 'postcode', value: postcode, label: 'Billing Postcode' },
+       { field: 'country', value: country, label: 'Billing Country' },
+     ];
+
+     if (paymentMethod === 'add_new_card') {
+       requiredFields.push(
+         { field: 'cardName', value: cardName, label: 'Name on Card' },
+         { field: 'cardNumber', value: cardNumber, label: 'Card Number' },
+         { field: 'expiryMonth', value: expiryMonth, label: 'Expiration Month' },
+         { field: 'expiryYear', value: expiryYear, label: 'Expiration Year' },
+         { field: 'cvv', value: cvv, label: 'CVV/Security Code' }
+       );
+     }
+
+     const missingFields = requiredFields.filter(f => !f.value.trim());
+
+     if (missingFields.length > 0) {
+       alert(`Please fill in the following required fields:\n${missingFields.map(f => `- ${f.label}`).join('\n')}`);
+       return; // Stop submission if validation fails
+     }
+     // --- End Basic Form Validation ---
+
+
+     // Simulate API call & response using actual details
+     // TODO: Replace console.log with actual API call
+     console.log("Sending booking request with details:", {
+       accommodationId: id,
+       ...bookingDetails,
+       // Include form data:
+       paymentOption,
+       paymentMethod,
+       cardName: paymentMethod === 'add_new_card' ? cardName : undefined, // Only send if adding new card
+       // ... other card details (handle securely in real app)
+       billingAddress: { streetAddress, aptSuite, city, state, postcode, country },
+       guestInfo: { travelerName, emailAddress, phoneCode, phoneNumber, receiveMessages },
+       specialRequest,
      });
-     setPaymentStatus('success');
+
+     // Example: Set state for success dialog using actual totalCost
+     setReceiptDetails({
+       amount: bookingDetails.totalCost, // Use actual total cost
+       refNumber: `BK-${Date.now()}`, // Example ref number
+       vendorName: accommodation.host.name,
+       paymentMethod: paymentMethod === 'saved_card' ? 'Saved Card (****6614)' : 'New Card', // Example
+       paymentTime: new Date().toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'medium' }),
+       sender: travelerName || 'Guest' // Use entered name or default
+     });
+     setPaymentStatus('success'); // Assume success for now
      setIsStatusDialogOpen(true);
 
      // Example for error state (uncomment to test)
@@ -225,22 +314,26 @@ export default function BookingPage() {
 
             {/* --- Confirm Booking Section --- */}
             <h2 className="text-2xl font-bold text-[#0E2F3C] font-bricolage">Confirm your booking</h2>
+            {/* Pass booking details to BookingSummaryCard */}
             <BookingSummaryCard
               accommodation={accommodation}
+              bookingDetails={bookingDetails} // Pass the details object
               couponCode={couponCode}
               onCouponChange={setCouponCode}
               onApplyCoupon={() => { /* Placeholder */ alert("Apply Coupon Clicked"); }}
             />
             {/* --- End Confirm Booking Section --- */}
 
-            {/* --- Payment Options --- */}
+            {/* --- Payment Options - Use actual totalCost --- */}
             <div>
                <h2 className="text-2xl font-bold text-[#0E2F3C] font-bricolage mb-4">Select your payment options</h2>
                <RadioGroup value={paymentOption} onValueChange={setPaymentOption} className="space-y-3">
                   <Label htmlFor="pay_now" className="flex items-center justify-between border border-[#828282] rounded-lg p-4 cursor-pointer has-[:checked]:border-[#E09F3E] has-[:checked]:border-2">
-                     <span>Pay <strong>₦{totalCost.toLocaleString()}</strong> now</span>
+                     {/* Use actual total cost */}
+                     <span>Pay <strong>₦{bookingDetails.totalCost.toLocaleString()}</strong> now</span>
                      <RadioGroupItem value="pay_now" id="pay_now" />
                   </Label>
+                  {/* TODO: Check if reservation is actually possible based on accommodation data */}
                    <Label htmlFor="pay_later" className="flex items-center justify-between border border-[#E0E0E0] rounded-lg p-4 cursor-not-allowed bg-gray-50 text-gray-400">
                      <span>This property does not offer reservations</span>
                      <RadioGroupItem value="pay_later" id="pay_later" disabled />
@@ -432,12 +525,13 @@ export default function BookingPage() {
              </div>
              {/* --- End Cancellation policy --- */}
 
-             {/* --- Important Information --- */}
+             {/* --- Important Information - Use actual dates/nights --- */}
              <div className="space-y-4 border border-[#E0E0E0] rounded-lg p-6">
                  <h3 className="text-lg font-semibold text-[#0E2F3C]">Important Information</h3>
                  <div className="grid grid-cols-2 gap-4 font-manrope text-sm text-[#4F4F4F]">
-                    <p><strong>Check-in:</strong> Fri, Feb 14, 2:00 PM</p> {/* Placeholder */}
-                    <p><strong>Check-out:</strong> Mon, Feb 17, 12:00 noon (3-night stay)</p> {/* Placeholder */}
+                    {/* Display actual check-in/out dates - format is now imported */}
+                    <p><strong>Check-in:</strong> {bookingDetails.checkIn ? format(parseISO(bookingDetails.checkIn), 'EEE, MMM d, yyyy') : 'N/A'}, 2:00 PM</p> {/* Assuming fixed time */}
+                    <p><strong>Check-out:</strong> {bookingDetails.checkOut ? format(parseISO(bookingDetails.checkOut), 'EEE, MMM d, yyyy') : 'N/A'}, 12:00 noon ({bookingDetails.nights}-night stay)</p> {/* Assuming fixed time */}
                  </div>
                  <p className="font-manrope text-sm text-[#4F4F4F]">We ask every guest to remember a few simple things about what makes a great guest:</p>
                  <ul className="list-disc pl-5 space-y-1 font-manrope text-sm text-[#4F4F4F]">
@@ -496,4 +590,42 @@ export default function BookingPage() {
        )}
      </div>
    );
+}
+
+
+// Wrap the main component with Suspense for useSearchParams
+export default function BookingPage() {
+  return (
+    <Suspense fallback={<BookingPageSkeleton />}> {/* Use Skeleton component as fallback */}
+      <BookingPageContent />
+    </Suspense>
+  );
+}
+
+// Skeleton component for the loading state
+function BookingPageSkeleton() {
+  return (
+     <div className="min-h-screen bg-white">
+        <Header />
+        <main className="w-[1440px] mx-auto px-[60px] pb-20">
+          <Skeleton className="h-8 w-1/2 my-6" /> {/* Breadcrumb Skeleton */}
+          <Skeleton className="h-12 w-full mb-6" /> {/* Alert Skeleton */}
+          <div className="grid grid-cols-3 gap-10">
+            <div className="col-span-2 space-y-6">
+              <Skeleton className="h-48 w-full" /> {/* Confirmation Card Skeleton */}
+              <Skeleton className="h-24 w-full" /> {/* Payment Options Skeleton */}
+              <Skeleton className="h-96 w-full" /> {/* Payment Methods Skeleton */}
+              <Skeleton className="h-48 w-full" /> {/* Guest Info Skeleton */}
+              <Skeleton className="h-32 w-full" /> {/* Special Request Skeleton */}
+              <Skeleton className="h-40 w-full" /> {/* Policy Skeleton */}
+              <Skeleton className="h-40 w-full" /> {/* Important Info Skeleton */}
+            </div>
+            <div className="col-span-1 space-y-6">
+               <Skeleton className="h-64 w-full" /> {/* Ad Banner Skeleton */}
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+  );
 }

@@ -4,35 +4,62 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Star, Edit, Info, ShoppingCart } from 'lucide-react'; // Import necessary icons
-import { Accommodation } from '@/types/accommodation'; // Assuming type is available
+import { Star, Edit, Info, ShoppingCart } from 'lucide-react';
+import { Accommodation } from '@/types/accommodation';
+import { format, parseISO } from 'date-fns'; // Import date-fns functions
+
+// Define the structure for booking details passed from the parent
+interface BookingDetails {
+  checkIn: string | null;
+  checkOut: string | null;
+  guests: number;
+  units: number;
+  nights: number;
+  subtotal: number;
+  totalCost: number;
+  caution: number;
+  service: number;
+  vat: number;
+}
 
 interface BookingSummaryCardProps {
   accommodation: Accommodation;
-  // Add props for dynamic dates, guests, units, coupon later
+  bookingDetails: BookingDetails; // Add the new prop
   couponCode: string;
   onCouponChange: (value: string) => void;
-  onApplyCoupon: () => void; // Placeholder
+  onApplyCoupon: () => void;
 }
 
 const BookingSummaryCard: React.FC<BookingSummaryCardProps> = ({
   accommodation,
+  bookingDetails, // Destructure the new prop
   couponCode,
   onCouponChange,
   onApplyCoupon,
 }) => {
-  // Placeholder calculations - replace with actual logic if needed
-  const nights = 5;
-  const subtotal = accommodation.currentPrice * nights;
-  const cautionDeposit = 100000; // Example from Figma
-  const serviceCharge = 10000; // Example from Figma
-  const vat = 22500; // Example from Figma
-  const totalCost = subtotal + cautionDeposit + serviceCharge + vat;
+  // Use values from bookingDetails prop
+  const {
+    checkIn,
+    checkOut,
+    guests,
+    units,
+    nights,
+    subtotal,
+    totalCost,
+    caution,
+    service,
+    vat
+  } = bookingDetails;
 
-  // Placeholder dynamic data - replace later
-  const dates = "Friday, Feb 14 - Monday, Feb 17";
-  const guests = "2 Adults, 3 Children, 1 Infant";
-  const units = "1 Unit";
+  // Format dates for display
+  const formattedCheckIn = checkIn ? format(parseISO(checkIn), 'EEE, MMM d, yyyy') : 'N/A';
+  const formattedCheckOut = checkOut ? format(parseISO(checkOut), 'EEE, MMM d, yyyy') : 'N/A';
+  const dates = `${formattedCheckIn} - ${formattedCheckOut}`;
+
+  // Format guests/units for display (simple example)
+  const guestsDisplay = `${guests} Guest${guests > 1 ? 's' : ''}`;
+  const unitsDisplay = `${units} Unit${units > 1 ? 's' : ''}`;
+
 
   return (
     // Card matching Figma: border, padding, rounded, internal gap
@@ -64,8 +91,10 @@ const BookingSummaryCard: React.FC<BookingSummaryCardProps> = ({
         <div className="flex justify-between items-center">
           <div>
             <p className="font-manrope text-xl font-bold text-[#0E2F3C] mb-1">Dates</p>
+            {/* Use formatted dates */}
             <p className="font-manrope text-lg text-[#4F4F4F]">{dates}</p>
           </div>
+          {/* TODO: Link Edit button back to the detail page or open a modal */}
           <Button variant="link" className="text-[#4F4F4F] hover:text-[#0E2F3C] p-0 h-auto font-manrope text-xl font-bold underline">
             <Edit size={20} className="mr-2"/> Edit
           </Button>
@@ -74,8 +103,10 @@ const BookingSummaryCard: React.FC<BookingSummaryCardProps> = ({
         <div className="flex justify-between items-center">
           <div>
             <p className="font-manrope text-xl font-bold text-[#0E2F3C] mb-1">No. of Guests</p>
-            <p className="font-manrope text-lg text-[#4F4F4F]">{guests}</p>
+            {/* Use formatted guests */}
+            <p className="font-manrope text-lg text-[#4F4F4F]">{guestsDisplay}</p>
           </div>
+           {/* TODO: Link Edit button back to the detail page or open a modal */}
            <Button variant="link" className="text-[#4F4F4F] hover:text-[#0E2F3C] p-0 h-auto font-manrope text-xl font-bold underline">
             <Edit size={20} className="mr-2"/> Edit
           </Button>
@@ -84,8 +115,10 @@ const BookingSummaryCard: React.FC<BookingSummaryCardProps> = ({
         <div className="flex justify-between items-center">
           <div>
             <p className="font-manrope text-xl font-bold text-[#0E2F3C] mb-1">No. of Units</p>
-            <p className="font-manrope text-lg text-[#4F4F4F]">{units}</p>
+             {/* Use formatted units */}
+            <p className="font-manrope text-lg text-[#4F4F4F]">{unitsDisplay}</p>
           </div>
+           {/* TODO: Link Edit button back to the detail page or open a modal */}
            <Button variant="link" className="text-[#4F4F4F] hover:text-[#0E2F3C] p-0 h-auto font-manrope text-xl font-bold underline">
             <Edit size={20} className="mr-2"/> Edit
           </Button>
@@ -96,18 +129,19 @@ const BookingSummaryCard: React.FC<BookingSummaryCardProps> = ({
 
       {/* Price Details Section */}
       <div className="flex flex-col gap-3.5"> {/* Match Figma gap (14px) */}
-         <h4 className="font-manrope text-xl font-bold text-[#0E2F3C] mb-0">Price details</h4> {/* Removed mb */}
+         <h4 className="font-manrope text-xl font-bold text-[#0E2F3C] mb-0">Price details</h4>
+         {/* Use values from bookingDetails */}
          <div className="flex justify-between font-manrope text-base text-[#4F4F4F]">
-            <span>₦{accommodation.currentPrice.toLocaleString()} x {nights} nights</span>
+            <span>₦{accommodation.currentPrice.toLocaleString()} x {nights} night{nights > 1 ? 's' : ''} x {units} unit{units > 1 ? 's' : ''}</span>
             <span className="font-bold">₦{subtotal.toLocaleString()}</span>
          </div>
           <div className="flex justify-between font-manrope text-base text-[#4F4F4F]">
             <span>Caution Deposit <Info size={14} className="inline text-[#828282]"/></span>
-            <span className="font-bold">₦{cautionDeposit.toLocaleString()}</span>
+            <span className="font-bold">₦{caution.toLocaleString()}</span>
          </div>
           <div className="flex justify-between font-manrope text-base text-[#4F4F4F]">
             <span>Service charge <Info size={14} className="inline text-[#828282]"/></span>
-            <span className="font-bold">₦{serviceCharge.toLocaleString()}</span>
+            <span className="font-bold">₦{service.toLocaleString()}</span>
          </div>
           <div className="flex justify-between font-manrope text-base text-[#4F4F4F]">
             <span>VAT <Info size={14} className="inline text-[#828282]"/></span>

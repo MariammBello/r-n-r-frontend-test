@@ -53,3 +53,42 @@ export interface FetchAccommodationsParams {
   page?: number;
   limit?: number;
 }
+
+// Type for the accommodation categories/types shown on the landing page
+export interface AccommodationType {
+  id: number | string; // Unique identifier for the type
+  name: string; // Display name (e.g., "Apartments")
+  image: string; // URL for the representative image
+  link: string; // Link to the page showing accommodations of this type
+}
+
+// --- Review Types ---
+
+export interface ReviewBreakdown {
+  category: string;
+  score: number;
+}
+
+export interface IndividualReview {
+  name: string;
+  location: string;
+  rating: number; // Assuming this is out of 10 based on mock data
+  scoreType: string; // e.g., "Excellent", "Average"
+  date: string; // Consider using Date type if parsing/formatting needed later
+  text: string;
+  avatar: string; // URL for avatar image
+}
+
+export interface ReviewsData {
+  overallRating: number; // Overall average rating
+  totalReviews: number; // Total number of reviews counted
+  ratingBreakdown: ReviewBreakdown[];
+  individualReviews: IndividualReview[];
+}
+
+// --- FAQ Type ---
+
+export interface FaqItem {
+  q: string; // Question
+  a: string; // Answer
+}

@@ -45,8 +45,14 @@ import {
   ShoppingCart,
 } from "lucide-react";
 
-import { fetchAccommodationById } from "@/lib/api/accommodations";
-import { Accommodation } from "@/types/accommodation";
+// Import all necessary fetch functions and types
+import {
+  fetchAccommodationById,
+  fetchReviewsByAccommodationId,
+  fetchPoliciesByAccommodationId,
+  fetchFaqsByAccommodationId
+} from "@/lib/api/accommodations";
+import { Accommodation, ReviewsData, FaqItem } from "@/types/accommodation"; // Import necessary types
 import { cn } from '@/lib/utils';
 
 // Revalidate data periodically or on demand if needed (optional)
@@ -90,9 +96,15 @@ const amenityIconMap: Record<string, LucideIcon> = {
 // const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
 
 export default async function AccommodationDetailPage({ params }: { params: { id: string } }) {
-  const accommodation = await fetchAccommodationById(params.id);
+  // Fetch all data in parallel
+  const [accommodation, reviewsData, policies, faqs] = await Promise.all([
+    fetchAccommodationById(params.id),
+    fetchReviewsByAccommodationId(params.id),
+    fetchPoliciesByAccommodationId(params.id),
+    fetchFaqsByAccommodationId(params.id)
+  ]);
 
-  // If no accommodation found for the ID, show 404
+  // If the main accommodation data fails to load, show 404
   if (!accommodation) {
     notFound();
   }
@@ -104,37 +116,8 @@ export default async function AccommodationDetailPage({ params }: { params: { id
     ));
   };
 
-  // Placeholder data matching the new design structure
-  const policies = [
-    "To help protect your payment, always use Roots’n’Route to send money and communicate with host", // Updated text
-    "Review Host Policy before making payments or reservations. This includes policies regarding refunds and cancellations",
-    "In rare cases, you may be eligible for a refund outside of this policy under Roots’n’Route’s Refunds & Dispute Policy.",
-  ];
-  const reviewsData = { // Structure based on image
-    overallRating: 4.7, // Example
-    totalReviews: 47, // Example
-    ratingBreakdown: [
-      { category: "Location", score: 4.8 },
-      { category: "Check-in", score: 4.9 },
-      { category: "Cleanliness", score: 4.6 },
-      { category: "Communication", score: 4.7 },
-      { category: "Amenities", score: 4.5 },
-      { category: "Eco-friendliness", score: 4.0 },
-    ],
-    individualReviews: [
-      { name: "Tina Rugby", location: "Atlanta, Georgia", rating: 10, scoreType: "Excellent", date: "August 23, 2024", text: "I came here in August with my husband for our 25th wedding anniversary and we stayed 7 nights. It was the best experience ever. The apartment was very neat, clean... We enjoyed our stay here we will be back here again with the whole family.", avatar: "/images/placeholder-user.jpg" },
-      { name: "Tina Rugby", location: "Atlanta, Georgia", rating: 6.5, scoreType: "Average", date: "August 23, 2024", text: "I enjoyed my stay here. The only major problem encountered was finding my way to the location which I eventually did. It was a bit too remote then I would have liked, but I would love to come...", avatar: "/images/placeholder-user.jpg" },
-      { name: "Tina Rugby", location: "Atlanta, Georgia", rating: 4, scoreType: "Poor", date: "August 23, 2024", text: "My husband and I did not enjoy our stay here at all. The apartment was in a very noisy environment and hold parties every night which prevented us from getting any rest at all. We also had a problem accessing local amenities as we had to go a distance to get ...", avatar: "/images/placeholder-user.jpg" },
-      { name: "Tina Rugby", location: "Atlanta, Georgia", rating: 10, scoreType: "Excellent", date: "August 23, 2024", text: "I came here in August with my husband for our 25th wedding anniversary and we stayed 7 nights. It was the best experience ever. The apartment was very neat, clean... We enjoyed our stay here we will be back here again with the whole family.", avatar: "/images/placeholder-user.jpg" },
-    ]
-  };
-  const faqs = [
-    { q: "Is the house located in a secure estate?", a: "This 4 bedroom bungalow is located in 'Rural Estate' on Hakeem Dickson street in Lekki phase 1. It is a secure estate with security who conduct routine checks when residents come in and out of the estate to ensure the safety of everyone." },
-    { q: "Will I need an access code to get into the building?", a: "Access code needed, front desk (limited hours)" },
-     { q: "Will I be charged if I want to check-in at an earlier time?", a: "Early check-in is subject to availability. Extra cost may apply." },
-   ];
-
-   // Cost calculations are now handled within BookingCard component
+   // Data (reviewsData, policies, faqs) is now fetched above
+   // Cost calculations are handled within BookingCard component
 
    return (
      <div className="relative w-full mx-auto bg-white overflow-x-hidden">
