@@ -1,4 +1,4 @@
-lein# Roots n Routes - Travel Platform
+# Roots n Routes - Travel Platform
 
 ## Overview
 
