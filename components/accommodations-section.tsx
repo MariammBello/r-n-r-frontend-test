@@ -3,7 +3,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { ChevronRight } from "lucide-react"
+import { ChevronRight, ChevronLeft } from "lucide-react" // Import ChevronLeft
 import { useState, useEffect } from "react" // Import hooks
 import { AccommodationType } from "@/types/accommodation" // Import the type
 import { accommodationTypes as mockAccommodationTypes } from "@/lib/mock-data/accommodationTypes" // Import mock data
@@ -21,6 +21,13 @@ export default function AccommodationsSection() {
   }, []) // Empty dependency array ensures this runs only once
 
   // TODO: Implement carousel logic (state for current index, handlers for next/prev)
+  // Placeholder functions to resolve ReferenceError
+  const prevSlide = () => {
+    console.log("Previous slide clicked - logic not implemented");
+  };
+  const nextSlide = () => {
+    console.log("Next slide clicked - logic not implemented");
+  };
 
   return (
     <section className="w-full my-[72px]">
