@@ -25,7 +25,7 @@ export default function VacationPlanningBanner() {
           {isAuthenticated ? (
             <Link
               href="/book-now"
-              className="px-6 py-2 bg-[#e09f3e] text-[#0e2f3c] rounded-md font-bold hover:bg-[#d08f2e] transition-colors"
+              className="px-6 py-2 bg-[#e09f3e] text-[#0e2f3c] rounded-md font-bold hover:bg-a transition-colors"
             >
               Book Now
             </Link>

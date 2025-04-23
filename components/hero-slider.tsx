@@ -20,6 +20,8 @@ export default function HeroSlider() {
             className="object-cover"
             priority
           />
+
+
           {/* Dark overlay for better text readability */}
           <div className="absolute inset-0 bg-black/30"></div>
         </div>
@@ -39,14 +41,14 @@ export default function HeroSlider() {
           {isAuthenticated ? (
             <Link
               href="/experiences"
-              className="px-10 py-4 bg-[#e09f3e] text-[#0e2f3c] text-lg font-bold rounded-md hover:bg-[#d08f2e] transition-colors"
+              className="px-10 py-4 bg-[#e09f3e] text-[#0e2f3c] text-lg font-bold rounded-md  hover:bg-slate-800 hover:text-white transition-colors"
             >
               Explore Now
             </Link>
           ) : (
             <Link
               href="/auth/signin"
-              className="px-10 py-4 bg-[#e09f3e] text-[#0e2f3c] text-lg font-bold rounded-md hover:bg-[#d08f2e] transition-colors"
+              className="px-10 py-4 bg-[#e09f3e] text-[#0e2f3c] text-lg font-bold rounded-md  hover:bg-slate-800 hover:text-white  transition-colors"
             >
               Sign In
             </Link>

@@ -22,6 +22,7 @@ const includeIconMap: Record<string, React.ElementType> = {
   // Add more mappings as needed
 };
 
+
 export default function BundleDealsSection() {
   const [deals, setDeals] = useState<BundleDeal[]>([]);
   const [isLoading, setIsLoading] = useState(true);

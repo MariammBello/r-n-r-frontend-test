@@ -1,3 +1,4 @@
+
 "use client" // Add "use client" because we'll use hooks
 
 import Image from "next/image"
@@ -6,6 +7,7 @@ import { ChevronRight } from "lucide-react"
 import { useState, useEffect } from "react" // Import hooks
 import { AccommodationType } from "@/types/accommodation" // Import the type
 import { accommodationTypes as mockAccommodationTypes } from "@/lib/mock-data/accommodationTypes" // Import mock data
+
 
 export default function AccommodationsSection() {
   // State to hold the accommodation types
@@ -81,8 +83,17 @@ export default function AccommodationsSection() {
           <button className="absolute right-0 top-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md z-10">
             <ChevronRight className="text-[#0e2f3c]" size={24} />
           </button>
+
         </div>
+        <button onClick={prevSlide} className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white text-slate-800 p-2 rounded-full border-2 border-slate-800 hover:bg-slate-800 hover:text-white">
+                 <ChevronLeft size={24} />
+        </button>
+        <button onClick={nextSlide} className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white text-slate-800 p-2 rounded-full  border-2 border-slate-800 hover:bg-slate-800 hover:text-white">
+                <ChevronRight size={24} />
+        </button>
       </div>
+     
     </section>
+
   );
 }
