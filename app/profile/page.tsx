@@ -1,11 +1,22 @@
+<<<<<<< HEAD
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import WorkInProgress from "@/components/work-in-progress"
 import Image from "next/image"
 import { User, Settings, CreditCard, Heart, Ticket } from "lucide-react"
+=======
+
+"use client";
+import { useState } from "react";
+import Header from "@/components/header"
+import Footer from "@/components/footer"
+import { FaCheckCircle, FaEdit, FaBars, FaTimes } from "react-icons/fa";
+import Link from "next/link";
+>>>>>>> 8d983bf (updated profile management section)
 
 export default function ProfilePage() {
   return (
+<<<<<<< HEAD
     <div className="min-h-screen bg-white">
       {/* Header */}
       <Header />
@@ -97,6 +108,146 @@ export default function ProfilePage() {
 
       {/* Footer */}
       <Footer />
+=======
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
+      
+      {/* Toggle Button for Sidebar */}
+      <div className='mb-12'>
+              <Header />
+       
+              </div>
+      <button
+        className="md:hidden p-4 bg-white shadow flex items-center"
+        onClick={() => setIsSidebarOpen(true)}
+      >
+        <FaBars className="text-xl" />
+      </button>
+
+      {/* Sidebar */}
+      <aside
+        className={`${
+          isSidebarOpen ? "block" : "hidden"
+        } md:block fixed md:static top-0 left-0 z-50 bg-white w-3/4 md:w-1/4 h-full border-r p-6 shadow-md`}
+      >
+        {/* Close Button on Mobile */}
+        <div className="flex justify-end md:hidden mb-4">
+          <button onClick={() => setIsSidebarOpen(false)}>
+            <FaTimes className="text-2xl" />
+          </button>
+        </div>
+
+        {/* User Info */}
+        <div className="flex flex-col items-center md:items-start w-full">
+          <div className="w-16 h-16 bg-gray-300 rounded-full"></div>
+          <h2 className="mt-3 text-lg font-bold text-center md:text-left">
+            Sarah Philips <FaCheckCircle className="inline text-green-500" />
+          </h2>
+          <p className="text-sm text-gray-500 text-center md:text-left">
+            sarah@xyz.com
+          </p>
+          <p className="text-xs text-gray-400 text-center md:text-left">
+            Certified Wanderer
+          </p>
+        </div>
+
+        {/* Navigation Links */}
+        <div className="mt-6 w-full">
+          <nav>
+            <ul className="flex flex-col space-y-2">
+              <li>
+              <Link
+                  href="/personal-information"
+                  className="block p-2 hover:bg-amber-500 hover:text-white"
+                  onClick={() => setIsSidebarOpen(false)}
+                >
+Personal Information                </Link>
+              </li>
+              <li>
+                <Link
+                  href="personal-info"
+                  className="block p-2 hover:bg-amber-500 hover:text-white"
+                  onClick={() => setIsSidebarOpen(false)}
+                >
+                  Payment Methods
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/reservations"
+                  className="block p-2 hover:bg-amber-500 hover:text-white"
+                  onClick={() => setIsSidebarOpen(false)}
+                >
+                  Reservations & Trips
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="referral"
+                  className="block p-2 hover:bg-amber-500 hover:text-white"
+                  onClick={() => setIsSidebarOpen(false)}
+                >
+                  Referrals & Rewards
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="security"
+                  className="block p-2 hover:bg-amber-500 hover:text-white"
+                  onClick={() => setIsSidebarOpen(false)}
+                >
+                  Security & Privacy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/settings-preferences"
+                  className="block p-2 hover:bg-amber-500 hover:text-white"
+                  onClick={() => setIsSidebarOpen(false)}
+                >
+                  Settings & Preferences
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/help-feedback"
+                  className="block p-2 hover:bg-amber-500 hover:text-white"
+                  onClick={() => setIsSidebarOpen(false)}
+                >
+                  Help & Feedback
+                </Link>
+              </li>
+              <li>
+                
+              <Link
+                  href="/log-out"
+                  className="block text-red-500 hover:textblack items-center ml-4"
+                  onClick={() => setIsSidebarOpen(false)}
+                >
+                  Log Out
+                </Link>
+
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </aside>
+
+      <main className="w-full md:w-3/4 p-4 md:p-8 ml-auto">
+          <div className="flex flex-col md:flex-row justify-between">
+            <div>
+              
+            
+           
+          </div>
+
+          
+        </div>
+      </main>
+       <div className='mt-12'>
+                  <Footer />
+           
+                  </div>
+>>>>>>> 8d983bf (updated profile management section)
     </div>
   )
 }
