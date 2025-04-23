@@ -38,8 +38,8 @@ export default function LandingPage() {
       {/* Promo Banner */}
       <PromoBanner />
 
-      {/* Viewed Recently - only shown for authenticated users */}
-      <ViewedRecently />
+      {/* Viewed Recently */}
+      {isAuthenticated && <ViewedRecently />}
 
       {/* Destinations Section */}
       <DestinationsSection />

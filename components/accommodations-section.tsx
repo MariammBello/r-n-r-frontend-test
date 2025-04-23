@@ -1,39 +1,28 @@
+"use client" // Add "use client" because we'll use hooks
+
 import Image from "next/image"
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
-
-// Accommodation types data
-const accommodationTypes = [
-  {
-    id: 1,
-    name: "Apartments",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-jGyk2mylWLojMQTWtHRdyA6WidAjOJ.png",
-    link: "/accommodation/apartments",
-  },
-  {
-    id: 2,
-    name: "Duplexes",
-    image: "/images/accom-duplexes.png", // Updated path
-    link: "/accommodation/duplexes",
-  },
-  {
-    id: 3,
-    name: "Mansions",
-    image: "/images/accom-mansions.png", // Updated path
-    link: "/accommodation/mansions",
-  },
-  {
-    id: 4,
-    name: "Villas",
-    // Assuming there's no accom-villas.png, using a generic placeholder for now
-    image: "/images/placeholder.jpg", 
-    link: "/accommodation/villas",
-  },
-]
+import { useState, useEffect } from "react" // Import hooks
+import { AccommodationType } from "@/types/accommodation" // Import the type
+import { accommodationTypes as mockAccommodationTypes } from "@/lib/mock-data/accommodationTypes" // Import mock data
 
 export default function AccommodationsSection() {
+  // State to hold the accommodation types
+  const [types, setTypes] = useState<AccommodationType[]>([])
+
+  // Simulate fetching data on component mount
+  useEffect(() => {
+    // In a real scenario, this would be an API call
+    // For now, we just use the imported mock data
+    setTypes(mockAccommodationTypes)
+  }, []) // Empty dependency array ensures this runs only once
+
+  // TODO: Implement carousel logic (state for current index, handlers for next/prev)
+
   return (
     <section className="w-full my-[72px]">
+      {/* Reverted to original width and padding */}
       <div className="w-full mx-auto px-[60px]">
         {/* Header with title and "See all listings" button */}
         <div className="flex items-center justify-between mb-8">
@@ -49,11 +38,14 @@ export default function AccommodationsSection() {
         </div>
 
         {/* Accommodation types carousel */}
+        {/* TODO: Replace this div with a proper carousel component (e.g., from shadcn/ui) */}
         <div className="relative">
+          {/* Reverted overflow behavior, kept mapping over 'types' */}
           <div className="flex space-x-6 overflow-hidden">
-            {accommodationTypes.slice(0, 3).map((type) => (
+            {types.map((type) => ( // Map over the state variable 'types'
               <div
                 key={type.id}
+                // Reverted to original width calculation
                 className="flex-none w-[calc(33.333%-16px)] relative rounded-lg overflow-hidden"
               >
                 {/* Accommodation Image */}
@@ -63,15 +55,19 @@ export default function AccommodationsSection() {
                     src={type.image || "/images/placeholder.jpg"}
                     alt={type.name}
                     fill
+                    // Removed sizes attribute and hover effect for simplicity, revert if needed
                     className="object-cover"
                   />
+                  {/* Removed gradient overlay */}
                 </div>
 
-                {/* Clickable Accommodation Type Name */}
+                {/* Clickable Accommodation Type Name - Reverted Styling */}
                 <Link
                   href={type.link}
+                  // Reverted to original styling
                   className="block absolute bottom-0 left-0 right-0 bg-[#e09f3e] py-4 hover:bg-[#d08f2e] transition-colors"
                 >
+                  {/* Reverted to original styling */}
                   <h3 className="text-[#0e2f3c] text-2xl font-bold text-center">
                     {type.name}
                   </h3>
@@ -80,7 +76,8 @@ export default function AccommodationsSection() {
             ))}
           </div>
 
-          {/* Navigation arrow */}
+          {/* Navigation arrow - Reverted to original single arrow */}
+          {/* TODO: Implement proper carousel controls later */}
           <button className="absolute right-0 top-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md z-10">
             <ChevronRight className="text-[#0e2f3c]" size={24} />
           </button>

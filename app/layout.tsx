@@ -20,7 +20,7 @@ export default function RootLayout({
       <body className="bg-gray-50" suppressHydrationWarning={true}> {/* Added suppressHydrationWarning */}
         <AuthProvider>
           {children}
-          <LoginDemo />
+          {/* <LoginDemo /> Removed */}
         </AuthProvider>
       </body>
     </html>
