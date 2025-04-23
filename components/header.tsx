@@ -4,6 +4,7 @@ import Link from "next/link";
 import Logo from "@/components/logo";
 import { ChevronDown, type LucideIcon } from "lucide-react"; // Import LucideIcon type
 import { useAuth } from "@/contexts/auth-context";
+
 import UserProfileButton from "@/components/user-profile-button";
 import {
   solutionsNavItems,
@@ -41,7 +42,7 @@ export default function Header() {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/">
-              <Logo className="w-36 h-auto" />
+              <Logo className="w-36 h-auto transition-transform duration-300 ease-out hover:scale-110 ml-14" />
             </Link>
           </div>
 
@@ -122,7 +123,7 @@ export default function Header() {
             </div>
             <Link
               href="#"
-              className="px-6 py-2 bg-[#0e2f3c] text-white rounded-md font-medium hover:bg-[#0a2530] transition-colors"
+              className="px-6 py-2 bg-[#0e2f3c] text-white rounded-md font-medium  hover:text-slate-800 hover:bg-amber-500 transition-colors"
             >
               Get the App
             </Link>

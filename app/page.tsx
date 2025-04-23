@@ -13,9 +13,11 @@ import AccommodationsSection from "@/components/accommodations-section"
 import VacationPlanningBanner from "@/components/vacation-planning-banner"
 import AffordableFlightsSection from "@/components/affordable-flights-section"
 import NaijaExperienceSection from "@/components/naija-experience-section"
+import  SideBar from "@/components/sidebar"
 import RootsBlogSection from "@/components/roots-blog-section"
 import Footer from "@/components/footer"
 import { useAuth } from "@/contexts/auth-context"
+import { Import } from "lucide-react"
 
 export default function LandingPage() {
   const { isAuthenticated } = useAuth()

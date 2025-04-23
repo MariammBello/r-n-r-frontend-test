@@ -5,9 +5,7 @@ import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { Home, FileText, MessageCircle } from 'lucide-react';
-import Header from '@/components/header';
-import Footer from "@/components/footer"
-import ProfilePage from '../profile/page';
+
 type TabType = 'Bookings' | 'Reservations' | 'Wishlist';
 
 export default function ReservationsPage() {
@@ -21,27 +19,8 @@ export default function ReservationsPage() {
   };
 
   return (
-    
     <div className={`min-h-screen bg-white ${viewStyle === 'dotted' ? 'dotted-background' : ''}`}>
-         <div className='mb-12'>
-                                <Header />
-                         
-                                </div>
-                                <div className="max-w-6xl mx-auto px-4 py-6 flex gap-6">
-  {/* Profile Section */}
-  <div>
-
-  </div>
-  {/* <div className="flex gap-6 px-4 py-6">
-
-  <aside className="w-1/4 bg-gray-100 rounded-lg p-4 shadow">
-    <ProfilePage />
-  </aside>
-  </div> */}
-  </div>
-            
       <Head>
-
         <title>Reservations & Trips</title>
         <meta name="description" content="Manage your reservations and trips" />
         <link rel="icon" href="/favicon.ico" />
@@ -56,7 +35,9 @@ export default function ReservationsPage() {
         </Link>
         <span className="text-sm text-gray-500 hover:text-black cursor-pointer">Home</span>
 
-        <span className="mx-2 text-gray-400"> &gt; </span>
+
+        <span className="mx-2 text-gray-400">&gt;</span>
+
         <Link href="/profile" className="text-gray-500 hover:text-black">
           <span className="text-sm">Profile</span>
         </Link>
@@ -124,18 +105,18 @@ export default function ReservationsPage() {
         </button>
       </div>
 
-    
-
       <style jsx global>{`
         .dotted-background {
           background-image: radial-gradient(#e2f0fb 1px, transparent 1px);
           background-size: 20px 20px;
         }
       `}</style>
+
        <div className='mt-12'>
                           <Footer />
                    
                           </div>
+
     </div>
   );
 }
