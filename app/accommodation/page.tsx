@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from "next/link"
 import Image from "next/image"
-import { Home, ChevronRight, CalendarDays, ChevronLeft } from "lucide-react"
+import { Home, ChevronRight, CalendarDays, ChevronLeft } from "lucide-react" // Keep CalendarDays for potential use elsewhere if needed
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 
@@ -14,37 +14,31 @@ import Footer from "@/components/footer"
 import {
   Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Calendar } from "@/components/ui/calendar"
+// Removed Label, Input, Popover, Calendar imports
+import { Button } from "@/components/ui/button" // Keep Button for Vacation Banner
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
   Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious,
 } from "@/components/ui/pagination"
-import { Skeleton } from "@/components/ui/skeleton" // Import Skeleton
+import { Skeleton } from "@/components/ui/skeleton"
 
 // Custom Components
 import AccommodationFilters from "@/components/accommodation-filters"
-import AccommodationCard from "@/components/accommodation-card" // Assuming AccommodationCardProps is defined within this component now
+import AccommodationCard from "@/components/accommodation-card"
+import AccommodationSearchBar from "@/components/AccommodationSearchBar";
+import PromoBanner2 from "@/components/promo-banner"; // Import the reusable banner
 
 // API & Types
 import { fetchAccommodations } from "@/lib/api/accommodations"
 import { Accommodation, FetchAccommodationsResponse } from "@/types/accommodation"
+import VacationPlanningBanner from "@/components/vacation-planning-banner"
 
 // Component to handle the main logic, wrapped in Suspense
 function AccommodationPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // State for search inputs
-  const [destination, setDestination] = useState(searchParams.get('location') || '');
-  const [fromDate, setFromDate] = useState<Date | undefined>(undefined); // Keep date state for now, not used in mock API
-  const [toDate, setToDate] = useState<Date | undefined>(undefined);     // Keep date state for now, not used in mock API
-  const [numTravelers, setNumTravelers] = useState('');                 // Keep traveler state for now, not used in mock API
-
-  // State for fetched data
+  // State for fetched data ONLY
   const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [pagination, setPagination] = useState({
@@ -64,7 +58,7 @@ function AccommodationPageContent() {
         maxPrice: searchParams.get('maxPrice') ? Number(searchParams.get('maxPrice')) : undefined,
         sortBy: searchParams.get('sort') || undefined,
         page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
-        // Add other filters like amenities here if needed
+        // TODO: Add date and traveler params from searchParams if AccommodationSearchBar adds them
       };
 
       try {
@@ -77,7 +71,6 @@ function AccommodationPageContent() {
         });
       } catch (error) {
         console.error("Failed to fetch accommodations:", error);
-        // Handle error state if necessary
         setAccommodations([]);
         setPagination({ totalItems: 0, totalPages: 1, currentPage: 1 });
       } finally {
@@ -86,9 +79,9 @@ function AccommodationPageContent() {
     };
 
     fetchAndSetData();
-  }, [searchParams]); // Re-run effect when searchParams change
+  }, [searchParams]);
 
-  // Function to update URL search parameters
+  // Function to update URL search parameters (used by Filters and Pagination)
   const updateSearchParams = (newParams: Record<string, string | null>) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
 
@@ -107,12 +100,6 @@ function AccommodationPageContent() {
     }
 
     router.push(`/accommodation?${current.toString()}`);
-  };
-
-  // Handler for the main search button
-  const handleSearch = () => {
-    updateSearchParams({ location: destination });
-    // Add date/traveler params here if/when API supports them
   };
 
   // Handler for sort dropdown change
@@ -135,11 +122,10 @@ function AccommodationPageContent() {
   // Function to render pagination links
   const renderPagination = () => {
     const items = [];
-    const maxPagesToShow = 5; // Adjust as needed
+    const maxPagesToShow = 5;
     const startPage = Math.max(1, pagination.currentPage - Math.floor(maxPagesToShow / 2));
     const endPage = Math.min(pagination.totalPages, startPage + maxPagesToShow - 1);
 
-    // Previous Button
     items.push(
       <PaginationItem key="prev">
         <PaginationPrevious
@@ -153,12 +139,10 @@ function AccommodationPageContent() {
       </PaginationItem>
     );
 
-    // Ellipsis at start
     if (startPage > 1) {
       items.push(<PaginationItem key="start-ellipsis"><PaginationEllipsis /></PaginationItem>);
     }
 
-    // Page Numbers
     for (let i = startPage; i <= endPage; i++) {
       items.push(
         <PaginationItem key={i}>
@@ -174,12 +158,10 @@ function AccommodationPageContent() {
       );
     }
 
-     // Ellipsis at end
-    if (endPage < pagination.totalPages) {
+     if (endPage < pagination.totalPages) {
       items.push(<PaginationItem key="end-ellipsis"><PaginationEllipsis /></PaginationItem>);
     }
 
-    // Next Button
     items.push(
       <PaginationItem key="next">
         <PaginationNext
@@ -199,14 +181,9 @@ function AccommodationPageContent() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
       <Header />
-
-      {/* Main Content */}
       <main className="w-[1440px] mx-auto px-[60px]">
-        {/* Breadcrumbs START */}
         <Breadcrumb className="mt-12 pb-4">
-          {/* Breadcrumb content remains the same */}
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
@@ -226,112 +203,18 @@ function AccommodationPageContent() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        {/* Breadcrumbs END */}
 
-        {/* Find Accommodation Section START */}
         <section className="flex flex-col gap-8">
-          {/* Title */}
           <h1 className="font-bricolage text-4xl font-bold text-[#0E2F3C]">
             Find your Perfect Accommodation
           </h1>
 
-          {/* Form Area */}
           <div className="flex flex-col gap-4">
-            {/* Inputs Row */}
-            <div className="flex items-end gap-6">
-              {/* Destination */}
-              <div className="flex flex-col gap-2 flex-grow" style={{ maxWidth: '400px' }}>
-                <Label htmlFor="destination" className="font-manrope text-base font-extrabold text-[#4F4F4F]">Your Destination</Label>
-                <Input
-                  id="destination"
-                  placeholder="Enter Destination"
-                  className="border-[#4F4F4F] placeholder:text-[#4F4F4F]"
-                  value={destination}
-                  onChange={(e) => setDestination(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()} // Optional: search on Enter
-                />
-              </div>
-              {/* From Date */}
-              <div className="flex flex-col gap-2" style={{ width: '225px' }}>
-                {/* From Date Popover - logic remains the same for now */}
-                <Label htmlFor="from-date" className="font-manrope text-base font-extrabold text-[#4F4F4F]">From</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full justify-between text-left font-normal border-[#4F4F4F] text-[#4F4F4F]",
-                        !fromDate && "text-muted-foreground"
-                      )}
-                    >
-                      {fromDate ? format(fromDate, "dd - MM - yyyy") : <span>DD - MM - YYYY</span>}
-                      <CalendarDays className="ml-auto h-4 w-4 opacity-50 text-[#0E2F3C]" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar mode="single" selected={fromDate} onSelect={setFromDate} initialFocus />
-                  </PopoverContent>
-                </Popover>
-              </div>
-              {/* To Date */}
-              <div className="flex flex-col gap-2" style={{ width: '225px' }}>
-                {/* To Date Popover - logic remains the same for now */}
-                 <Label htmlFor="to-date" className="font-manrope text-base font-extrabold text-[#4F4F4F]">To</Label>
-                 <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full justify-between text-left font-normal border-[#4F4F4F] text-[#4F4F4F]",
-                        !toDate && "text-muted-foreground"
-                      )}
-                    >
-                      {toDate ? format(toDate, "dd - MM - yyyy") : <span>DD - MM - YYYY</span>}
-                      <CalendarDays className="ml-auto h-4 w-4 opacity-50 text-[#0E2F3C]" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar mode="single" selected={toDate} onSelect={setToDate} initialFocus />
-                  </PopoverContent>
-                </Popover>
-              </div>
-              {/* Number of Travelers */}
-              <div className="flex flex-col gap-2" style={{ width: '191px' }}>
-                {/* Travelers Input - logic remains the same for now */}
-                <Label htmlFor="travelers" className="font-manrope text-base font-extrabold text-[#4F4F4F]">Number of Travelers</Label>
-                <Input
-                  id="travelers"
-                  placeholder="Enter Number"
-                  type="number"
-                  className="border-[#4F4F4F] placeholder:text-[#4F4F4F]"
-                  value={numTravelers}
-                  onChange={(e) => setNumTravelers(e.target.value)}
-                 />
-              </div>
-              {/* Search Button */}
-              <Button
-                className="bg-[#E09F3E] text-[#0E2F3C] font-manrope font-extrabold hover:bg-[#d08f2e]"
-                style={{ width: '168px', height: '46px', alignSelf: 'flex-end' }}
-                onClick={handleSearch}
-                disabled={isLoading} // Disable button while loading
-              >
-                {isLoading ? 'Searching...' : 'Search'}
-              </Button>
-            </div>
+            {/* Use the new reusable search bar component */}
+            <AccommodationSearchBar />
 
-            {/* Vacation Planning Banner - remains the same */}
-            <div className="flex items-center justify-between bg-[#0E2F3C] rounded-lg border border-[#0E2F3C] py-[15px] pl-12 pr-6">
-              <div className="flex items-center gap-3">
-                <Image src="/images/vacation-bundle-icon.svg" alt="Bundle deal icon" width={60} height={60} />
-                <p className="font-manrope text-lg font-extrabold text-white tracking-wide">
-                  Planning your next vacation?<br />
-                  Book bundle deals on accommodations & flights and save up to 30%
-                </p>
-              </div>
-              <Button className="bg-[#E09F3E] text-[#0E2F3C] font-manrope font-extrabold hover:bg-[#d08f2e] px-4 py-3 h-10">
-                Explore Now!
-              </Button>
-            </div>
+            {/* Use reusable PromoBanner for Vacation Planning */}
+            <VacationPlanningBanner/>
 
             {/* Results Info Row */}
             <div className="flex justify-between items-center mt-4">
@@ -340,17 +223,15 @@ function AccommodationPageContent() {
                   ? 'Loading results...'
                   : `Showing ${accommodations.length > 0 ? ((pagination.currentPage - 1) * (searchParams.get('limit') ? Number(searchParams.get('limit')) : 4)) + 1 : 0}-${Math.min(pagination.currentPage * (searchParams.get('limit') ? Number(searchParams.get('limit')) : 4), pagination.totalItems)} of ${pagination.totalItems} results`
                 }
-                {/* TODO: Add date range display if API supports it */}
               </p>
               <Select
-                value={searchParams.get('sort') || 'rating'} // Default to rating sort
+                value={searchParams.get('sort') || 'rating'}
                 onValueChange={handleSortChange}
               >
                 <SelectTrigger className="w-[320px] border-[#0E2F3C] text-[#0E2F3C]">
                   <SelectValue placeholder={
                     <span className="flex flex-col items-start">
                       <span className="text-sm font-normal">Sort by</span>
-                      {/* Dynamically show selected sort */}
                       <span className="text-base font-normal capitalize">
                         { (searchParams.get('sort') || 'rating').replace('-', ' ') }
                       </span>
@@ -358,7 +239,6 @@ function AccommodationPageContent() {
                   } />
                 </SelectTrigger>
                 <SelectContent>
-                  {/* <SelectItem value="recommended">Recommended</SelectItem> */} {/* Mock API doesn't have recommended */}
                   <SelectItem value="rating">Rating</SelectItem>
                   <SelectItem value="price-asc">Price: Low to High</SelectItem>
                   <SelectItem value="price-desc">Price: High to Low</SelectItem>
@@ -367,18 +247,11 @@ function AccommodationPageContent() {
             </div>
           </div>
         </section>
-        {/* Find Accommodation Section END */}
 
-        {/* Filters and Results Section START */}
         <section className="mt-12 flex gap-10">
-          {/* Filters Sidebar */}
-          {/* Pass updateSearchParams to filters to allow them to update URL */}
           <AccommodationFilters updateSearchParams={updateSearchParams} />
-
-          {/* Results Area */}
           <div className="flex-1 flex flex-col gap-6">
             {isLoading ? (
-              // Show Skeleton loaders while loading
               <>
                 <Skeleton className="h-[250px] w-full rounded-lg" />
                 <Skeleton className="h-[250px] w-full rounded-lg" />
@@ -386,13 +259,9 @@ function AccommodationPageContent() {
                 <Skeleton className="h-[250px] w-full rounded-lg" />
               </>
             ) : accommodations.length > 0 ? (
-              // Render fetched accommodation cards
               accommodations.map((accommodation) => (
                 <AccommodationCard
                   key={accommodation.id}
-                  // Pass props matching the Accommodation type and AccommodationCard expected props
-                  // Assuming AccommodationCard now takes the full Accommodation object or specific props
-                  // Adjust based on AccommodationCard's actual props definition
                   id={accommodation.id}
                   images={accommodation.images}
                   host={accommodation.host}
@@ -405,19 +274,15 @@ function AccommodationPageContent() {
                   originalPrice={accommodation.originalPrice}
                   currentPrice={accommodation.currentPrice}
                    priceType={accommodation.priceType}
-                   onSelect={handleSelectCard} // Pass the handler
-                   // isSelected is not needed for basic navigation on click
+                   onSelect={handleSelectCard}
                  />
                ))
             ) : (
-              // Show message if no results found
               <p className="text-center text-gray-500 py-10">No accommodations found matching your criteria.</p>
             )}
           </div>
         </section>
-        {/* Filters and Results Section END */}
 
-        {/* Pagination START */}
         {pagination.totalPages > 1 && (
           <div className="mt-12 flex justify-center">
             <Pagination>
@@ -427,11 +292,7 @@ function AccommodationPageContent() {
             </Pagination>
           </div>
         )}
-        {/* Pagination END */}
-
       </main>
-
-      {/* Footer */}
       <Footer />
     </div>
   );
@@ -440,7 +301,7 @@ function AccommodationPageContent() {
 // Wrap the main content component with Suspense for useSearchParams
 export default function AccommodationPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}> {/* Basic fallback */}
+    <Suspense fallback={<div>Loading...</div>}>
       <AccommodationPageContent />
     </Suspense>
   );

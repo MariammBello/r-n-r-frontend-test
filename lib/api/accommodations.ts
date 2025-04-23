@@ -4,12 +4,16 @@ import {
   Accommodation,
   FetchAccommodationsParams,
   FetchAccommodationsResponse,
-  ReviewsData, // Import Review types
-  FaqItem // Import FaqItem type
+  ReviewsData,
+  FaqItem,
+  DestinationCity,
+  BundleDeal // Import BundleDeal type
 } from '@/types/accommodation';
-import { mockReviewsData } from '@/lib/mock-data/reviews'; // Import mock review data
-import { mockPolicies } from '@/lib/mock-data/policies'; // Import mock policy data
-import { mockFaqs } from '@/lib/mock-data/faqs'; // Import mock faq data
+import { mockReviewsData } from '@/lib/mock-data/reviews';
+import { mockPolicies } from '@/lib/mock-data/policies';
+import { mockFaqs } from '@/lib/mock-data/faqs';
+import { mockDestinations } from '@/lib/mock-data/destinations';
+import { mockBundleDeals } from '@/lib/mock-data/bundleDeals'; // Import mock bundle deal data
 
 const SIMULATED_DELAY_MS = 300; // Simulate network latency
 
@@ -132,6 +136,32 @@ export const fetchFaqsByAccommodationId = async (
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(mockFaqs); // Return the imported mock data
+    }, SIMULATED_DELAY_MS);
+  });
+};
+
+/**
+ * Simulates fetching featured destinations for the landing page.
+ */
+export const fetchFeaturedDestinations = async (): Promise<DestinationCity[]> => {
+  console.log(`Simulating fetch featured destinations`);
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      // Return only the first 3 for the landing page display, as in the original component
+      resolve(mockDestinations.slice(0, 3));
+    }, SIMULATED_DELAY_MS);
+  });
+};
+
+/**
+ * Simulates fetching bundle deals for the landing page.
+ */
+export const fetchBundleDeals = async (): Promise<BundleDeal[]> => {
+  console.log(`Simulating fetch bundle deals`);
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      // Return all mock deals for now, component can slice if needed
+      resolve(mockBundleDeals);
     }, SIMULATED_DELAY_MS);
   });
 };

@@ -3,7 +3,7 @@
 import Header from "@/components/header"
 import LocationFinder from "@/components/location-finder"
 import HeroSlider from "@/components/hero-slider"
-import PromoBanner from "@/components/promo-banner"
+import PromoBanner2 from "@/components/promo-banner"
 import ViewedRecently from "@/components/viewed-recently"
 import DestinationsSection from "@/components/destinations-section"
 import BookingSection from "@/components/booking-section"
@@ -36,7 +36,7 @@ export default function LandingPage() {
       </div>
 
       {/* Promo Banner */}
-      <PromoBanner />
+      <PromoBanner2 />
 
       {/* Viewed Recently */}
       {isAuthenticated && <ViewedRecently />}

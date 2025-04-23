@@ -92,3 +92,67 @@ export interface FaqItem {
   q: string; // Question
   a: string; // Answer
 }
+
+// --- Destination Type ---
+
+export interface DestinationCity {
+  id: string | number; // Unique ID for the city
+  name: string;
+  image: string; // URL for the representative image
+  description: string;
+  slug: string; // URL-friendly identifier (e.g., "lagos", "port-harcourt")
+}
+
+// --- Bundle Deal Type ---
+
+export interface BundleDeal {
+  id: string | number;
+  name: string; // Name of the resort/deal
+  location: string;
+  rating: number; // Star rating (e.g., 5)
+  reviews: number; // Number of reviews
+  image: string; // URL for the main image
+  price: number; // Numeric price
+  priceFormatted?: string; // Optional pre-formatted price string if needed
+  includes: string[]; // Array of included items (e.g., "Breakfast")
+  accessType: 'General Access' | 'VIP Access' | string; // Type of access or package tier
+  dealLink?: string; // Optional link to the specific deal page
+}
+
+// --- Recently Viewed Item Type ---
+
+export interface RecentlyViewedItem {
+  id: string | number;
+  type: 'accommodation' | 'flight' | 'bundle' | string; // Type of item viewed
+  title: string; // Main title (e.g., property name, airline, "Bundle Deal")
+  location?: string; // For accommodation
+  route?: string; // For flight (e.g., "ETH - LOS")
+  image: string; // URL for thumbnail image
+  dates?: { // Optional dates viewed
+    from: string; // Formatted date string
+    to: string; // Formatted date string
+  };
+  travelers?: number; // Optional number of travelers
+  roundtrip?: boolean; // Optional for flights
+  itemLink: string; // Link to the item's detail page
+}
+
+// --- Experience Type ---
+
+export interface ExperienceType {
+  id: string | number;
+  name: string; // e.g., "Events", "Attractions"
+  image: string; // URL for representative image
+  link: string; // Link to the specific experience category page
+}
+
+// --- Blog Post Summary Type ---
+
+export interface BlogPostSummary {
+  id: string | number;
+  title: string;
+  image: string; // URL for the featured image
+  excerpt: string;
+  link: string; // Link to the full blog post
+  slug?: string; // Optional slug if link is constructed differently
+}

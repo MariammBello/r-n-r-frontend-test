@@ -1,12 +1,12 @@
 "use client"; // Need client component for state and effects
 
-import { useState, useEffect, useMemo } from "react"; // Import hooks
+import { useState, useMemo } from "react"; // Import hooks (Removed useEffect)
 import { useRouter } from 'next/navigation'; // Import router for navigation
 import Link from "next/link"; // Keep Link for Report button
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input"; // Keep if needed for future state
+// import { Input } from "@/components/ui/input"; // Removed unused Input import
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
@@ -131,12 +131,13 @@ const BookingCard: React.FC<BookingCardProps> = ({
             <div className="flex gap-2"> {/* Gap from Figma Frame 644 - Reduced from gap-4 */}
               {/* Check In (Figma Frame 282) */}
               <Popover>
+                {/* Re-adding asChild prop */}
                 <PopoverTrigger asChild>
                   {/* Button matching Figma: border #0E2F3C, rounded-lg (8px), p-2 (approx 9px/16px). Added flex-1 */}
                   {/* Ensure flex-1 is present */}
                   <Button variant="outline" className="flex-1 flex flex-col items-start h-auto p-[9px_16px] border-[#0E2F3C] rounded-lg text-left hover:bg-gray-50 gap-[3px]">
-                    {/* Label: Manrope 14px bold #4F4F4F */}
-                    <Label className="font-manrope text-sm font-extrabold text-[#4F4F4F]">Check In</Label>
+                    {/* Replaced Label with span */}
+                    <span className="font-manrope text-sm font-extrabold text-[#4F4F4F]">Check In</span>
                     <div className="flex items-center justify-between w-full">
                       <span className={cn("font-manrope text-base", !dateRange?.from ? "text-[#828282]" : "text-[#4F4F4F]")}>
                         {formatDateDisplay(dateRange?.from)}
@@ -157,11 +158,13 @@ const BookingCard: React.FC<BookingCardProps> = ({
               </Popover>
               {/* Check Out (Figma Frame 283) */}
               <Popover>
+                 {/* Re-adding asChild prop */}
                 <PopoverTrigger asChild>
                   {/* Added flex-1 */}
                   {/* Ensure flex-1 is present */}
                   <Button variant="outline" className="flex-1 flex flex-col items-start h-auto p-[9px_16px] border-[#0E2F3C] rounded-lg text-left hover:bg-gray-50 gap-[3px]">
-                    <Label className="font-manrope text-sm font-extrabold text-[#4F4F4F]">Check out</Label>
+                    {/* Replaced Label with span */}
+                    <span className="font-manrope text-sm font-extrabold text-[#4F4F4F]">Check out</span>
                     <div className="flex items-center justify-between w-full">
                        <span className={cn("font-manrope text-base", !dateRange?.to ? "text-[#828282]" : "text-[#4F4F4F]")}>
                          {formatDateDisplay(dateRange?.to)}
@@ -190,7 +193,8 @@ const BookingCard: React.FC<BookingCardProps> = ({
                 {/* Removed intermediate flex div */}
                 {/* Left side: Label + Value */}
                 <div className="flex flex-col gap-[8px]"> {/* Kept vertical stack for label/value */}
-                  <Label className="font-manrope text-sm font-extrabold text-[#4F4F4F]">No. of Guests</Label>
+                  {/* Replaced Label with span */}
+                  <span className="font-manrope text-sm font-extrabold text-[#4F4F4F]">No. of Guests</span>
                   <span className="font-manrope text-base text-[#828282]">{guests}</span> {/* Display state */}
                 </div>
                 {/* Right side: Buttons */}
@@ -209,7 +213,8 @@ const BookingCard: React.FC<BookingCardProps> = ({
                 {/* Removed intermediate flex div */}
                 {/* Left side: Label + Value */}
                 <div className="flex flex-col gap-[8px]"> {/* Kept vertical stack for label/value */}
-                  <Label className="font-manrope text-sm font-extrabold text-[#4F4F4F]">No. of Units</Label>
+                   {/* Replaced Label with span */}
+                  <span className="font-manrope text-sm font-extrabold text-[#4F4F4F]">No. of Units</span>
                   <span className="font-manrope text-base text-[#828282]">{units}</span> {/* Display state */}
                 </div>
                 {/* Right side: Buttons */}

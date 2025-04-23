@@ -8,22 +8,15 @@ export default function PromoBanner() {
   const { isAuthenticated } = useAuth()
 
   return (
-    <section className="w-full max-w-[1300px] mx-auto bg-[#0e2f3c] py-4">
+    <section className="w-full max-w-[1300px] mx-auto bg-[#0e2f3c] py-4 rounded-[10px]">
       <div className="w-full  mx-auto px-[60px]">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <div className="mr-3">
-              <Image
-                src="/images/bundle-icon.svg"
-                alt="Bundle rewards icon"
-                width={32}
-                height={32}
-                className="w-8 h-8"
-              />
+            <div className="mr-4">
+              <Image src="/images/bundle-icon.svg" alt="Bundle rewards icon" width={50} height={50} className="w-10 h-10" />
             </div>
             <p className="text-white text-lg font-medium">
-              Unlock exclusive rewards when you book bundle deals
-            </p>
+              Unlock exclusive rewards when you book bundle deals</p>
           </div>
 
           {isAuthenticated ? (
