@@ -2,7 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import "./globals.css"
 import { AuthProvider } from "@/contexts/auth-context"
-import LoginDemo from "@/components/login-demo"
+// import LoginDemo from "@/components/login-demo" // Removed import
 
 export const metadata: Metadata = {
   title: "Roots n Routes - Travel & Explore",
