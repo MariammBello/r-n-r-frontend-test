@@ -2,16 +2,15 @@
 
 import Link from "next/link";
 import Logo from "@/components/logo";
-import { ChevronDown, type LucideIcon } from "lucide-react"; // Import LucideIcon type
+import { ChevronDown, type LucideIcon } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
-
 import UserProfileButton from "@/components/user-profile-button";
 import {
   solutionsNavItems,
   resourcesNavItems,
   opportunityNavItems,
-  type NavItem, // Import the NavItem type
-} from "@/lib/navigationData"; // Import the navigation data
+  type NavItem,
+} from "@/lib/navigationData";
 
 // Helper component for dropdown menu items
 const DropdownMenuItem = ({ item }: { item: NavItem }) => (
@@ -31,9 +30,16 @@ const DropdownMenuItem = ({ item }: { item: NavItem }) => (
   </Link>
 );
 
+// Define props for the Header component
+interface HeaderProps {
+  excludeNavItems?: string[]; // Optional array of nav item titles to exclude
+}
 
-export default function Header() {
+export default function Header({ excludeNavItems = [] }: HeaderProps) { // Destructure props with default value
   const { isAuthenticated } = useAuth();
+
+  // Helper function to check if a nav item should be rendered
+  const shouldRenderNavItem = (title: string) => !excludeNavItems.includes(title);
 
   return (
     <header className="w-full border-b border-gray-200 shadow-sm">
@@ -48,74 +54,83 @@ export default function Header() {
 
           {/* Navigation */}
           <nav className="flex items-center space-x-10">
-            <div className="relative group z-40">
-              <div className="flex items-center space-x-1 text-[#0e2f3c] font-medium cursor-pointer">
-                <span>Solutions</span>
-                <ChevronDown size={16} className="transition-transform group-hover:rotate-180" />
-              </div>
+            {/* Solutions Nav Item - Conditionally Render */}
+            {shouldRenderNavItem("Solutions") && (
+              <div className="relative group z-40">
+                <div className="flex items-center space-x-1 text-[#0e2f3c] font-medium cursor-pointer">
+                  <span>Solutions</span>
+                  <ChevronDown size={16} className="transition-transform group-hover:rotate-180" />
+                </div>
 
-              {/* Solutions Dropdown - Full Width */}
-              <div
-                className="fixed left-0 right-0 bg-white shadow-lg border-t border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50"
-                style={{ top: "77px" }}
-              >
-                {/* Restored fixed width w-[1440px] to inner dropdown container */}
-                <div className="mx-auto w-[1440px] px-[60px] py-6">
-                  <div className="grid grid-cols-2 gap-x-16 gap-y-8">
-                    {solutionsNavItems.map((item) => (
-                      // Add key prop directly here
-                      <DropdownMenuItem key={item.href} item={item} />
-                    ))}
+                {/* Solutions Dropdown - Full Width */}
+                <div
+                  className="fixed left-0 right-0 bg-white shadow-lg border-t border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50"
+                  style={{ top: "77px" }}
+                >
+                  {/* Restored fixed width w-[1440px] to inner dropdown container */}
+                  <div className="mx-auto w-[1440px] px-[60px] py-6">
+                    <div className="grid grid-cols-2 gap-x-16 gap-y-8">
+                      {solutionsNavItems.map((item) => (
+                        // Add key prop directly here
+                        <DropdownMenuItem key={item.href} item={item} />
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </div> // Closing tag for the outer div
+            )}
 
-            <div className="relative group z-40">
-              <div className="flex items-center space-x-1 text-[#0e2f3c] font-medium cursor-pointer">
-                <span>Resources</span>
-                <ChevronDown size={16} className="transition-transform group-hover:rotate-180" />
-              </div>
+            {/* Resources Nav Item - Conditionally Render */}
+            {shouldRenderNavItem("Resources") && (
+              <div className="relative group z-40">
+                <div className="flex items-center space-x-1 text-[#0e2f3c] font-medium cursor-pointer">
+                  <span>Resources</span>
+                  <ChevronDown size={16} className="transition-transform group-hover:rotate-180" />
+                </div>
 
-              {/* Resources Dropdown - Full Width */}
-              <div
-                className="fixed left-0 right-0 bg-white shadow-lg border-t border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50"
-                style={{ top: "77px" }}
-              >
-                {/* Restored fixed width w-[1440px] to inner dropdown container */}
-                <div className="mx-auto w-[1440px] px-[60px] py-6">
-                  <div className="grid grid-cols-2 gap-x-16 gap-y-8">
-                    {resourcesNavItems.map((item) => (
-                      // Add key prop directly here
-                      <DropdownMenuItem key={item.href} item={item} />
-                    ))}
+                {/* Resources Dropdown - Full Width */}
+                <div
+                  className="fixed left-0 right-0 bg-white shadow-lg border-t border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50"
+                  style={{ top: "77px" }}
+                >
+                  {/* Restored fixed width w-[1440px] to inner dropdown container */}
+                  <div className="mx-auto w-[1440px] px-[60px] py-6">
+                    <div className="grid grid-cols-2 gap-x-16 gap-y-8">
+                      {resourcesNavItems.map((item) => (
+                        // Add key prop directly here
+                        <DropdownMenuItem key={item.href} item={item} />
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </div> // Closing tag for the outer div
+            )}
 
-            <div className="relative group z-40">
-              <div className="flex items-center space-x-1 text-[#0e2f3c] font-medium cursor-pointer">
-                <span>Opportunity</span>
-                <ChevronDown size={16} className="transition-transform group-hover:rotate-180" />
-              </div>
+            {/* Opportunity Nav Item - Conditionally Render */}
+            {shouldRenderNavItem("Opportunity") && (
+              <div className="relative group z-40">
+                <div className="flex items-center space-x-1 text-[#0e2f3c] font-medium cursor-pointer">
+                  <span>Opportunity</span>
+                  <ChevronDown size={16} className="transition-transform group-hover:rotate-180" />
+                </div>
 
-              {/* Opportunity Dropdown - Full Width */}
-              <div
-                className="fixed left-0 right-0 bg-white shadow-lg border-t border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50"
-                style={{ top: "77px" }}
-              >
-                {/* Restored fixed width w-[1440px] to inner dropdown container */}
-                <div className="mx-auto w-[1440px] px-[60px] py-6">
-                  <div className="grid grid-cols-2 gap-x-16 gap-y-8">
-                    {opportunityNavItems.map((item) => (
-                      // Add key prop directly here
-                      <DropdownMenuItem key={item.href} item={item} />
-                    ))}
+                {/* Opportunity Dropdown - Full Width */}
+                <div
+                  className="fixed left-0 right-0 bg-white shadow-lg border-t border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50"
+                  style={{ top: "77px" }}
+                >
+                  {/* Restored fixed width w-[1440px] to inner dropdown container */}
+                  <div className="mx-auto w-[1440px] px-[60px] py-6">
+                    <div className="grid grid-cols-2 gap-x-16 gap-y-8">
+                      {opportunityNavItems.map((item) => (
+                        // Add key prop directly here
+                        <DropdownMenuItem key={item.href} item={item} />
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </div> // Closing tag for the outer div
+            )}
           </nav>
 
           {/* Right side - Language, App button, Sign In */}

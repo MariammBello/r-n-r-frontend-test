@@ -2,14 +2,55 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { useAuth } from "@/contexts/auth-context"
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useAuth } from "@/contexts/auth-context";
 
-export default function HeroSlider() {
-  const { isAuthenticated } = useAuth()
+import React from "react"; // Import React for ReactNode type
+
+// Define props for the HeroSlider component
+interface HeroSliderProps {
+  title?: string;
+  description?: React.ReactNode;
+  buttonText?: string;
+  buttonLink?: string;
+  className?: string; // Add className prop
+}
+
+// Default content
+const defaultContent = {
+  title: "Your gateway to authentic African Adventures",
+  description: (
+    <>
+      Your all-in-one platform to{" "}
+      <span className="font-medium">connect directly</span>,
+      <span className="font-medium"> explore authentically</span> and
+      <span className="font-medium"> travel</span> Africa{" "}
+      <span className="font-medium">differently</span>
+    </>
+  ),
+  authButtonText: "Explore Now",
+  authButtonLink: "/experiences",
+  noAuthButtonText: "Sign In",
+  noAuthButtonLink: "/auth/login",
+};
+
+export default function HeroSlider({
+  title = defaultContent.title,
+  description = defaultContent.description,
+  buttonText, // Explicit button text from props takes precedence
+  buttonLink,
+  className = "", // Destructure className with default
+}: HeroSliderProps) {
+  const { isAuthenticated } = useAuth();
+
+  // Determine button content based on props or auth state
+  const finalButtonText = buttonText ?? (isAuthenticated ? defaultContent.authButtonText : defaultContent.noAuthButtonText);
+  const finalButtonLink = buttonLink ?? (isAuthenticated ? defaultContent.authButtonLink : defaultContent.noAuthButtonLink);
+
 
   return (
-    <section className="w-full relative mb-10">
+    // Apply passed className along with default classes
+    <section className={`w-full relative mb-10 ${className}`}>
       <div className="w-full max-w-[1300px] h-[680px] mx-auto relative overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0">
@@ -26,33 +67,21 @@ export default function HeroSlider() {
           <div className="absolute inset-0 bg-black/30"></div>
         </div>
 
-        {/* Slide content */}
+        {/* Slide content - Use props or defaults */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 z-10">
           <h1 className="text-5xl md:text-6xl font-bold text-white max-w-4xl mb-6">
-            Your gateway to authentic African Adventures
+            {title}
           </h1>
           <p className="text-xl md:text-2xl text-white max-w-3xl mb-10">
-            Your all-in-one platform to{" "}
-            <span className="font-medium">connect directly</span>,
-            <span className="font-medium"> explore authentically</span> and
-            <span className="font-medium"> travel</span> Africa{" "}
-            <span className="font-medium">differently</span>
+            {description}
           </p>
-          {isAuthenticated ? (
-            <Link
-              href="/experiences"
-              className="px-10 py-4 bg-[#e09f3e] text-[#0e2f3c] text-lg font-bold rounded-md  hover:bg-slate-800 hover:text-white transition-colors"
-            >
-              Explore Now
-            </Link>
-          ) : (
-            <Link
-              href="/auth/login" // Updated path
-              className="px-10 py-4 bg-[#e09f3e] text-[#0e2f3c] text-lg font-bold rounded-md  hover:bg-slate-800 hover:text-white  transition-colors"
-            >
-              Sign In
-            </Link>
-          )}
+          {/* Button - Use props if provided, otherwise use auth state */}
+          <Link
+            href={finalButtonLink}
+            className="px-10 py-4 bg-[#e09f3e] text-[#0e2f3c] text-lg font-bold rounded-md hover:bg-slate-800 hover:text-white transition-colors"
+          >
+            {finalButtonText}
+          </Link>
         </div>
 
         {/* Navigation arrows */}
