@@ -33,7 +33,7 @@ The application utilizes the Next.js App Router for file-based routing and serve
 The application is structured around several key travel-related features:
 
 *   **Exploration:** Destinations (`/destinations`), Accommodation (`/accommodation`), Flights (`/flights`), Experiences (`/experiences`), Deals (`/deals`).
-*   **User Management:** Authentication (`/auth/signin`), User Profile (`/profile`), Viewed Recently, Messages (`/messages`), Wallet (`/wallet`).
+*   **User Management:** Authentication (`/auth/login`), User Profile (`/profile`), Viewed Recently, Messages (`/messages`), Wallet (`/wallet`).
 *   **Content & Community:** Blog (`/blog`), Community Forum (`/community`), Help Center (`/help`), FAQs (`/faqs`).
 *   **Partner Opportunities:** Vendor Portal (implied), Event Ticket Selling (`/tickets`).
 

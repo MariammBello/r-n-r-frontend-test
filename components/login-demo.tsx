@@ -7,8 +7,8 @@ export default function LoginDemo() {
   const sampleUser = useSampleUser()
   const pathname = usePathname()
 
-  // Don't show the demo button on the sign-in page
-  if (pathname === "/auth/signin") {
+  // Don't show the demo button on the login page
+  if (pathname === "/auth/login") { // Updated path
     return null
   }
 

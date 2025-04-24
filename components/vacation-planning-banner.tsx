@@ -31,7 +31,7 @@ export default function VacationPlanningBanner() {
             </Link>
           ) : (
             <Link
-              href="/auth/signin"
+              href="/auth/login" // Updated path
               className="px-6 py-2 bg-[#e09f3e] text-[#0e2f3c] rounded-md font-bold hover:bg-[#d08f2e] transition-colors"
             >
               Sign In

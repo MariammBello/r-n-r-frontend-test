@@ -47,7 +47,7 @@ export default function HeroSlider() {
             </Link>
           ) : (
             <Link
-              href="/auth/signin"
+              href="/auth/login" // Updated path
               className="px-10 py-4 bg-[#e09f3e] text-[#0e2f3c] text-lg font-bold rounded-md  hover:bg-slate-800 hover:text-white  transition-colors"
             >
               Sign In

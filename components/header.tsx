@@ -135,7 +135,7 @@ export default function Header() {
             {isAuthenticated ? (
               <UserProfileButton />
             ) : (
-              <Link href="/auth/signin" className="flex items-center space-x-2">
+              <Link href="/auth/login" className="flex items-center space-x-2"> {/* Updated path */}
                 <span className="text-[#0e2f3c] font-medium">Sign In</span>
                 <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

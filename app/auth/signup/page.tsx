@@ -7,12 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 // Assuming you have a Select component in ui, otherwise use standard select
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useAuth, useSampleUser } from "@/contexts/auth-context";
+import { useAuth } from "@/contexts/auth-context"; // Removed useSampleUser
+import { useSearchParams } from 'next/navigation'; // Import useSearchParams
+import { signupUser as apiSignupUser } from "@/lib/api/auth"; // Import the mock API function
 
 export default function SignUpPage() {
   const router = useRouter();
   const { login } = useAuth();
-  const sampleUser = useSampleUser(); // Using sample user for placeholder login
+  // const sampleUser = useSampleUser(); // Removed sample user
+  const searchParams = useSearchParams();
+  const email = searchParams.get('email'); // Get email from URL
 
   // State for form fields
   const [firstName, setFirstName] = useState("");
@@ -20,16 +24,48 @@ export default function SignUpPage() {
   const [gender, setGender] = useState("");
   const [nationality, setNationality] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // Add loading state
+  const [error, setError] = useState<string | null>(null); // Add error state
   // const [showPassword, setShowPassword] = useState(false); // Optional: for show/hide password
 
   // Placeholder submit handler
-  const handleSignupSubmit = () => {
-    // TODO: Implement actual user creation logic here
-    console.log("Signing up with:", { firstName, lastName, gender, nationality, password });
-    // Simulate successful signup by logging in the sample user
-    login(sampleUser);
-    // Redirect to homepage
-    router.push('/');
+  const handleSignupSubmit = async () => { // Make async
+    setIsLoading(true); // Set loading true
+    setError(null); // Clear previous errors
+
+    const userData = {
+      first_name: firstName, // Match backend service naming
+      last_name: lastName,   // Match backend service naming
+      email: email,          // Include email from previous step
+      gender,
+      nationality,
+      password
+    };
+
+    console.log("Signing up with:", userData);
+
+    // Call the mock API function
+    const response = await apiSignupUser(userData);
+
+    if (response.success) {
+      // Signup successful (mock response)
+      // Simulate login immediately after signup and redirect home
+      console.log("Mock signup success, logging in and redirecting home...");
+      login({ // Manually create a user object for the context
+         id: 'new-user-' + Date.now(), // Generate temporary ID
+         name: `${firstName} ${lastName}`,
+         email: email || 'newuser@example.com', // Use email if available
+         avatar: '/placeholder.svg?height=40&width=40', // Default avatar
+         role: 'New User', // Default role
+         verified: true // Assume verified after completing signup form
+      });
+      router.push('/'); // Redirect to homepage
+      // Don't set isLoading false here as we are navigating away
+    } else {
+      // Handle signup failure
+      setError(response.error || 'Signup failed. Please try again.');
+      setIsLoading(false); // Set loading false on error
+    }
   };
 
   return (
@@ -175,9 +211,12 @@ export default function SignUpPage() {
             <Button
               className="w-full bg-[#0e2f3c] hover:bg-[#0e273c] text-white py-6 mt-6" // Added top margin
               onClick={handleSignupSubmit}
+              disabled={isLoading} // Disable button while loading
             >
-              Continue
+              {isLoading ? 'Signing Up...' : 'Continue'}
             </Button>
+            {/* Display error message if signup fails */}
+            {error && <p className="text-red-500 text-sm text-center mt-2">{error}</p>}
           </div>
         </div>
       </div>

@@ -23,7 +23,7 @@ export default function MemberDealsBanner() {
             </Link>
           ) : (
             <Link
-              href="/auth/signin"
+              href="/auth/login" // Updated path
               className="px-8 py-3 bg-[#5a1700] text-white rounded-md font-medium hover:bg-[#4a1300] transition-colors"
             >
               Sign In

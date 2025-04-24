@@ -7,17 +7,37 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input"; // Import Input
 import { Button } from "@/components/ui/button"; // Import Button
 import { useRouter } from 'next/navigation'; // Import useRouter
+import { forgotPasswordRequest as apiForgotPasswordRequest } from "@/lib/api/auth"; // Import the mock API function
 
 // Renamed component for clarity
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const router = useRouter(); // Get router instance
+  const [isLoading, setIsLoading] = useState(false); // Add loading state
+  const [error, setError] = useState<string | null>(null); // Add error state
+  const [message, setMessage] = useState<string | null>(null); // Add success/info message state
 
-  // TODO: Add API call here to actually initiate password reset
-  const handleContinue = () => {
+  // Updated handler to call mock API
+  const handleContinue = async () => { // Make async
+    setIsLoading(true);
+    setError(null);
+    setMessage(null);
     console.log("Forgot password for:", email);
-    // Navigate to confirmation page with parameters
-    router.push(`/auth/confirmation?flowType=forgot&email=${encodeURIComponent(email)}`);
+
+    // Call the mock API function
+    const response = await apiForgotPasswordRequest(email);
+
+    if (response.success) {
+      // Navigate to confirmation page on success
+      router.push(`/auth/verify?flowType=forgot&email=${encodeURIComponent(email || '')}`);
+      // Optionally set a success message if staying on the page briefly
+      // setMessage(response.message || 'OTP request sent.');
+    } else {
+      // Handle failure
+      setError(response.error || 'Failed to send OTP. Please try again.');
+      setIsLoading(false); // Set loading false on error
+    }
+    // Don't set isLoading false on success if navigating away immediately
   };
 
   return (
@@ -82,10 +102,13 @@ export default function ForgotPasswordPage() {
             <Button
               className="w-full bg-[#0e2f3c] hover:bg-[#0e273c] text-white py-6"
               onClick={handleContinue}
-              // disabled={isLoading} // Add loading state if needed
+              disabled={isLoading} // Disable button while loading
             >
-              Continue
+              {isLoading ? 'Sending...' : 'Continue'}
             </Button>
+            {/* Display error or success message */}
+            {error && <p className="text-red-500 text-sm text-center mt-2">{error}</p>}
+            {message && <p className="text-green-600 text-sm text-center mt-2">{message}</p>}
           </div>
         </div>
       </div>

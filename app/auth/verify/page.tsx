@@ -6,15 +6,18 @@ import { Input } from "@/components/ui/input"; // Import Input
 import { Button } from "@/components/ui/button"; // Import Button
 import Link from "next/link"; // Import Link for routing
 import { useSearchParams, useRouter } from 'next/navigation'; // Import useSearchParams and useRouter
-import { useAuth, useSampleUser } from "@/contexts/auth-context"; // Import auth context
+import { useAuth } from "@/contexts/auth-context"; // Import auth context (removed useSampleUser)
+import { verifyOtp as apiVerifyOtp } from "@/lib/api/auth"; // Import the mock API function
 
 // Renamed component for clarity
 export default function ConfirmationPage() {
   const [otp, setOtp] = useState(""); // State for OTP input
+  const [isLoading, setIsLoading] = useState(false); // Add loading state
+  const [error, setError] = useState<string | null>(null); // Add error state
   const searchParams = useSearchParams();
   const router = useRouter(); // Get router instance
   const { login } = useAuth(); // Get login function from context
-  const sampleUser = useSampleUser(); // Get sample user data
+  // const sampleUser = useSampleUser(); // Removed unused sample user
   // Read flowType and email from URL params
   const flowType = searchParams.get('flowType'); // e.g., 'signup', 'signin', 'forgot'
   const email = searchParams.get('email');
@@ -26,32 +29,44 @@ export default function ConfirmationPage() {
     if (email) {
       router.push(`/auth/input-password?email=${encodeURIComponent(email)}`);
     } else {
-      // Handle case where email is missing, maybe redirect to sign-in
+      // Handle case where email is missing, maybe redirect to login
       console.error("Email parameter missing for password sign-in");
-      router.push('/auth/signin');
+      router.push('/auth/login'); // Updated path
     }
   };
 
-  // Placeholder handler for Continue button
-  const handleContinue = () => {
-    // TODO: Add actual OTP verification logic here
+  // Updated handler for Continue button
+  const handleContinue = async () => { // Make async
+    setIsLoading(true); // Set loading true
+    setError(null); // Clear previous errors
     console.log("Verifying OTP:", otp);
 
-    if (flowType === 'signup') {
-      // For new users, navigate to the signup completion page
-      if (email) {
-        router.push(`/auth/signup?email=${encodeURIComponent(email)}`);
+    // Call the mock verify OTP API function
+    const response = await apiVerifyOtp(email, otp);
+
+    if (response.success && response.data?.user) {
+      // If OTP is valid, check the flow type
+      if (flowType === 'signup') {
+        // For new users, navigate to the signup completion page
+        // We don't log them in yet, they need to complete signup
+        if (email) {
+          router.push(`/auth/signup?email=${encodeURIComponent(email)}`);
+        } else {
+          console.error("Email parameter missing for signup flow");
+          // Redirect to login or signup start page if email is lost
+          router.push('/auth/login'); // Updated path
+        }
       } else {
-        console.error("Email parameter missing for signup flow");
-        // Redirect to signin or signup start page if email is lost
-        router.push('/auth/signin');
+        // For existing users (signin, forgot password), log them in
+        login(response.data.user); // Use user data from verify response
+        // Navigate to homepage
+        router.push('/');
       }
+      // Don't set isLoading false on successful navigation
     } else {
-      // For existing users (signin, forgot password), log in and go home
-      // Simulate successful verification by logging in the sample user
-      login(sampleUser);
-      // Navigate to homepage
-      router.push('/');
+      // Handle OTP verification failure
+      setError(response.error || 'OTP verification failed. Please try again.');
+      setIsLoading(false); // Set loading false on error
     }
   };
 
@@ -127,9 +142,12 @@ export default function ConfirmationPage() {
             <Button
               className="w-full bg-[#0e2f3c] hover:bg-[#0e273c] text-white py-6"
               onClick={handleContinue} // Attach the handler
+              disabled={isLoading} // Disable button while loading
             >
-              Continue
+              {isLoading ? 'Verifying...' : 'Continue'}
             </Button>
+            {/* Display error message if OTP verification fails */}
+            {error && <p className="text-red-500 text-sm text-center mt-2">{error}</p>}
 
             {/* Conditionally render Sign In with Password Button for 'signin' flow */}
             {flowType === 'signin' && (

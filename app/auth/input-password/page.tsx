@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input"; // Import Input
 import { Button } from "@/components/ui/button"; // Import Button
 import Link from "next/link"; // Import Link
 import { useRouter } from 'next/navigation'; // Import useRouter
-import { useAuth, useSampleUser } from "@/contexts/auth-context"; // Import auth context
+import { useAuth } from "@/contexts/auth-context"; // Import useAuth only (sampleUser not needed here)
+import { loginUser as apiLoginUser } from "@/lib/api/auth"; // Import the mock API function
 
 // TODO: Add logic for password visibility toggle if needed
 // import { Eye, EyeOff } from 'lucide-react';
@@ -16,18 +17,31 @@ export default function InputPasswordPage() {
   const searchParams = useSearchParams();
   const router = useRouter(); // Get router instance
   const { login } = useAuth(); // Get login function
-  const sampleUser = useSampleUser(); // Get sample user data
+  // const sampleUser = useSampleUser(); // Removed unused sample user
   const email = searchParams.get('email'); // Get email from URL query param
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // Add loading state
+  const [error, setError] = useState<string | null>(null); // Add error state
   // const [showPassword, setShowPassword] = useState(false); // State for password visibility
 
   // TODO: Implement actual sign-in logic with password verification
-  const handleSignIn = () => {
+  const handleSignIn = async () => { // Make async
+    setIsLoading(true); // Set loading true
+    setError(null); // Clear previous errors
     console.log("Signing in with:", email, password);
-    // Simulate successful password verification by logging in the sample user
-    login(sampleUser);
-    // Navigate to homepage
-    router.push('/');
+
+    // Call the mock API function (which now simulates triggering OTP send)
+    const response = await apiLoginUser(email, password);
+
+    if (response.success) {
+      // Navigate to verify page on success (OTP sent)
+      router.push(`/auth/verify?flowType=signin&email=${encodeURIComponent(email || '')}`); // Corrected path
+      // Don't set isLoading false here as we are navigating away
+    } else {
+      // Handle login failure (e.g., invalid credentials before OTP step)
+      setError(response.error || 'Login failed. Please try again.');
+      setIsLoading(false); // Set loading false on error
+    }
   };
 
   return (
@@ -114,10 +128,12 @@ export default function InputPasswordPage() {
             <Button
               className="w-full bg-[#0e2f3c] hover:bg-[#0e273c] text-white py-6"
               onClick={handleSignIn}
-              // disabled={isLoading} // Add loading state if needed
+              disabled={isLoading} // Disable button while loading
             >
-              Sign In
+              {isLoading ? 'Signing In...' : 'Sign In'}
             </Button>
+            {/* Display error message if login fails */}
+            {error && <p className="text-red-500 text-sm text-center mt-2">{error}</p>}
           </div>
         </div>
       </div>
