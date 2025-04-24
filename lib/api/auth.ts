@@ -34,14 +34,7 @@ export const loginUser = async (email?: string | null, password?: string): Promi
   console.log(`Mock API: Attempting login (to trigger OTP) for ${email}`);
   await simulateDelay(1000); // Simulate network latency
 
-  // TODO: Replace with actual fetch call
-  // const response = await fetch(`${API_BASE_URL}/login`, {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ email, password }),
-  // });
-  // const result = await response.json();
-  // return result;
+  // TODO: Replace with actual fetch call to POST /api/login
 
   // --- Mock Logic ---
   // Simulate success if credentials are 'valid' (e.g., test user)
@@ -71,14 +64,7 @@ export const signupUser = async (userData: any): Promise<ApiResponse> => {
   console.log("Mock API: Attempting signup with data:", userData);
   await simulateDelay(1500); // Simulate network latency
 
-  // TODO: Replace with actual fetch call
-  // const response = await fetch(`${API_BASE_URL}/signup`, {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify(userData),
-  // });
-  // const result = await response.json();
-  // return result; // Backend might indicate OTP sent, or auto-login
+  // TODO: Replace with actual fetch call to POST /api/signup
 
   // --- Mock Logic ---
   // Simulate successful signup (backend creates user, likely triggers OTP send next)
@@ -99,14 +85,7 @@ export const verifyOtp = async (email?: string | null, otp?: string): Promise<Ap
   console.log(`Mock API: Verifying OTP ${otp} for ${email}`);
   await simulateDelay(800);
 
-  // TODO: Replace with actual fetch call
-  // const response = await fetch(`${API_BASE_URL}/verify`, {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ email, otp }),
-  // });
-  // const result = await response.json();
-  // return result; // Should return user data and token on success
+  // TODO: Replace with actual fetch call to POST /api/verify
 
   // --- Mock Logic ---
   // Simulate success if OTP is, for example, '123456'
@@ -145,14 +124,7 @@ export const forgotPasswordRequest = async (email?: string | null): Promise<ApiR
   console.log(`Mock API: Requesting password reset OTP for ${email}`);
   await simulateDelay(700);
 
-  // TODO: Replace with actual fetch call
-  // const response = await fetch(`${API_BASE_URL}/forgot-password`, { // Assuming endpoint exists
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ email }),
-  // });
-  // const result = await response.json();
-  // return result;
+  // TODO: Replace with actual fetch call to POST /api/forgot-password
 
   // --- Mock Logic ---
   // Simulate success (backend would send OTP if email exists)

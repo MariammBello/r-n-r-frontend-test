@@ -1,5 +1,12 @@
 # Roots n Routes - Travel Platform
 
+
+## This project is in development. This first section directs you to what works so far
+- User authentication flow with test user set up here - Gets you to the signed in landing page where only accommodation works
+- Accommodation flow (partially works, but needs more styling work)
+- Current work being implemented- Vendor flow and city pages
+
+
 ## Overview
 
 This project is a web application called "Roots n Routes," designed as a comprehensive travel platform, likely focusing on destinations and experiences in Africa (suggested by names like "Naija Experience" and "Roots Blog"). It allows users to explore, plan, and potentially book various aspects of their travel.
