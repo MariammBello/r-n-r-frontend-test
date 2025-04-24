@@ -11,7 +11,7 @@ export default function Signin() {
       <div className="w-full sm:w-1/2 relative hidden sm:block">
         <Image
           src="/Images/flightimage.png"
-          alt="plane image"
+          alt="Aerial view with world map"
           fill
           className="object-cover"
         />

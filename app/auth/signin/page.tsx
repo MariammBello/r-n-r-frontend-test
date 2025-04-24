@@ -33,89 +33,49 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="flex h-screen">
-      {/* Left side - Map background */}
-      <div className="relative w-1/2 hidden md:block">
-        <div className="absolute inset-0">
-          <Image
-            src="/images/flightimage.png"
-            alt="Aerial view with world map"
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
+    <div className="flex h-screen font-sans flex-col sm:flex-row"> {/* Updated outer div class */}
+      {/* Left side - From confirmation page */}
+      <div className="w-full sm:w-1/2 relative hidden sm:block"> {/* Updated div class */}
+        <Image
+          src="/Images/flightimage.png" // Using /Images/ path
+          alt="Aerial view with world map"
+          fill
+          className="object-cover"
+          // Removed priority prop
+        />
 
-        {/* Red pin marker */}
-        <div className="absolute" style={{ top: "45%", left: "55%" }}>
-          <div className="w-6 h-8">
-            <svg viewBox="0 0 24 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M12 0C5.383 0 0 5.383 0 12C0 18.617 12 32 12 32C12 32 24 18.617 24 12C24 5.383 18.617 0 12 0ZM12 16C9.791 16 8 14.209 8 12C8 9.791 9.791 8 12 8C14.209 8 16 9.791 16 12C16 14.209 14.209 16 12 16Z"
-                fill="#E53935"
-              />
-            </svg>
-          </div>
-        </div>
+        <Image
+          src="/Images/plane.png" // Using /Images/ path
+          alt="plane"
+          width={800}
+          height={100}
+          className="absolute top-20 left-20 z-10"
+        />
 
-        {/* X marker */}
-        <div className="absolute" style={{ top: "55%", left: "55%" }}>
-          <div className="w-6 h-6">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M18 6L6 18M6 6L18 18"
-                stroke="#E53935"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-        </div>
-
-        {/* Airplane icon */}
-        <div className="absolute" style={{ top: "25%", right: "10%" }}>
-          <div className="w-16 h-16 text-white">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M21 16L12 7L2.99998 16L2.99998 14L12 5L21 14L21 16Z" fill="currentColor" />
-              <path d="M17 18L12 13L6.99998 18L6.99998 16L12 11L17 16L17 18Z" fill="currentColor" />
-            </svg>
-          </div>
-        </div>
-
-        {/* Flight path - dotted line */}
-        <div className="absolute inset-0 pointer-events-none">
-          <svg width="100%" height="100%" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M400 300 C 500 200, 600 400, 700 200"
-              stroke="#FF4081"
-              strokeWidth="2"
-              strokeDasharray="5,5"
-              fill="none"
-            />
-          </svg>
-        </div>
-
-        {/* Logo at bottom */}
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
-          <Logo className="w-48 h-auto" variant="white" />
-        </div>
+        <Image
+          src="/Images/logo2.png" // Using /Images/ path
+          alt="roots n routes logo"
+          width={200}
+          height={50}
+          className="absolute bottom-10 right-14 z-10"
+        />
       </div>
 
       {/* Right side - Login form */}
-      <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-8">
+      <div className="w-full sm:w-1/2 flex flex-col items-center justify-center p-8 sm:p-14"> {/* Updated div class and padding */}
+        {/* Logo - Placed like confirmation page */}
+        <Image
+          src="/Images/logo.svg"
+          alt="roots n routes logo"
+          width={100}
+          height={50}
+          className="transition-transform duration-300 ease-out hover:scale-110 mb-5"
+        />
+        {/* Form Content Wrapper */}
         <div className="w-full max-w-md">
-          {/* Logo (visible on mobile, hidden on desktop) */}
-          <div className="flex justify-center mb-8 md:hidden">
-            <Logo className="w-36 h-auto" />
-          </div>
+          {/* Removed old logo placements */}
 
-          {/* Logo (hidden on mobile, visible on desktop) */}
-          <div className="hidden md:flex justify-end mb-8">
-            <Logo className="w-36 h-auto" />
-          </div>
-
-          <h1 className="text-[#e09f3e] text-3xl font-medium mb-8">Sign in or Create account</h1>
+          <h1 className="text-[#e09f3e] text-3xl font-medium mb-8 text-center">Sign in or Create account</h1> {/* Added text-center */}
 
           <div className="space-y-6">
             <div>
