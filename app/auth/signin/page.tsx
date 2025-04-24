@@ -24,12 +24,25 @@ export default function SignInPage() {
   const handleSignIn = () => {
     setIsLoading(true)
 
-    // Simulate API call delay
-    setTimeout(() => {
-      login(sampleUser)
-      router.push("/")
-      setIsLoading(false)
-    }, 1000)
+    // TODO: Add logic here to check if user exists before navigating
+    // For now, directly navigate to confirmation page for sign-in flow
+    // Simulate potential API call delay if needed, or navigate directly
+    // setTimeout(() => { // Keep timeout if you want a delay effect
+      // login(sampleUser) // Remove direct login
+      // Navigate to confirmation page with parameters
+      router.push(`/auth/confirmation?flowType=signin&email=${encodeURIComponent(email)}`);
+      // setIsLoading(false) // Set loading false after navigation or API call completes
+    // }, 1000) // Adjust delay if needed
+
+    // Placeholder logic to differentiate flows for testing:
+    const flow = email === 'test@example.com' ? 'signin' : 'signup';
+    router.push(`/auth/confirmation?flowType=${flow}&email=${encodeURIComponent(email)}`);
+
+    // Note: setIsLoading(false) might need to be handled differently
+    // depending on whether the navigation itself should show loading.
+    // For simplicity, we can remove the loading state for now or handle it
+    // on the confirmation page if needed. Let's remove it here for now.
+    // setIsLoading(false);
   }
 
   return (

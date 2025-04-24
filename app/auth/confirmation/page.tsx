@@ -1,10 +1,59 @@
-"use client";
+"use client"; // Removed duplicate "use client"
 
 import Image from "next/image";
 import { useState } from "react";
+import { Input } from "@/components/ui/input"; // Import Input
+import { Button } from "@/components/ui/button"; // Import Button
+import Link from "next/link"; // Import Link for routing
+import { useSearchParams, useRouter } from 'next/navigation'; // Import useSearchParams and useRouter
+import { useAuth, useSampleUser } from "@/contexts/auth-context"; // Import auth context
 
-export default function Signin() {
-  const [email, setEmail] = useState("");
+// Renamed component for clarity
+export default function ConfirmationPage() {
+  const [otp, setOtp] = useState(""); // State for OTP input
+  const searchParams = useSearchParams();
+  const router = useRouter(); // Get router instance
+  const { login } = useAuth(); // Get login function from context
+  const sampleUser = useSampleUser(); // Get sample user data
+  // Read flowType and email from URL params
+  const flowType = searchParams.get('flowType'); // e.g., 'signup', 'signin', 'forgot'
+  const email = searchParams.get('email');
+  // Determine heading based on flowType
+  const headingText = flowType === 'signup' ? "Let's confirm your mail" : "Let's confirm it's you";
+
+  // Handler for Sign In with Password button
+  const handleSignInWithPassword = () => {
+    if (email) {
+      router.push(`/auth/input-password?email=${encodeURIComponent(email)}`);
+    } else {
+      // Handle case where email is missing, maybe redirect to sign-in
+      console.error("Email parameter missing for password sign-in");
+      router.push('/auth/signin');
+    }
+  };
+
+  // Placeholder handler for Continue button
+  const handleContinue = () => {
+    // TODO: Add actual OTP verification logic here
+    console.log("Verifying OTP:", otp);
+
+    if (flowType === 'signup') {
+      // For new users, navigate to the signup completion page
+      if (email) {
+        router.push(`/auth/signup?email=${encodeURIComponent(email)}`);
+      } else {
+        console.error("Email parameter missing for signup flow");
+        // Redirect to signin or signup start page if email is lost
+        router.push('/auth/signin');
+      }
+    } else {
+      // For existing users (signin, forgot password), log in and go home
+      // Simulate successful verification by logging in the sample user
+      login(sampleUser);
+      // Navigate to homepage
+      router.push('/');
+    }
+  };
 
   return (
     <div className="flex h-screen font-sans flex-col sm:flex-row">
@@ -41,30 +90,69 @@ export default function Signin() {
           height={50}
           className="transition-transform duration-300 ease-out hover:scale-110 mb-5"
         />
-     
-        <h1 className="text-2xl font-bold text-amber-500 mb-4 font-bricolage">
-          Lets confirm it's you
-        </h1>
-        {/* {email} */}
-        <p>Enter the 6-digit verification code sent to: </p>
-        <div className="flex flex-col mb-4 w-64 sm: ">
-          <label htmlFor="email" className="font-medium mb-2">
-          john@xyz.com          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="john@xyz.com"
-            className="border rounded-lg p-2"
-          />
-        </div>
-        <button className="w-64 bg-slate-800 text-white py-2 rounded-lg mt-8 hover:bg-amber-500 hover:text-slate-800">
-          Continue
-        </button>
-        <a href="/" className="mt-11 underline font-bold">Resend Code</a>
-        <p className="mt-4">Still cant log in? <a href="/" className="underline font-semibold">Contact our help center</a></p>
-        
+        {/* Form Content Wrapper - Added for consistency */}
+        <div className="w-full max-w-md">
+          {/* Conditional Heading */}
+          <h1 className="text-[#e09f3e] text-3xl font-medium mb-8 text-center">
+            {headingText}
+          </h1>
 
+          {/* Form elements matching the image */}
+          <div className="space-y-6">
+            <div>
+              {/* Instruction Text with Email */}
+              <label htmlFor="otp" className="block text-sm font-medium text-[#282828] mb-1 text-center">
+                Enter the 6-digit verification code sent to: <br />
+                <span className="font-semibold">{email || "your email"}</span>
+              </label>
+              {/* OTP Input */}
+              <Input
+                id="otp"
+                type="text" // Or "number" if preferred, but text allows more flexibility
+                placeholder="6-digit code" // Updated placeholder
+                className="w-full border-[#d9d9d9] text-center" // Added text-center
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                maxLength={6} // Assuming 6-digit OTP
+              />
+              {/* Resend Code Link - Removed text-right */}
+              <div className="mt-4 text-center">
+                <button className="text-sm font-medium text-[#0e2f3c] hover:underline">
+                  Resend Code
+                </button>
+              </div>
+            </div>
+
+            {/* Continue Button */}
+            <Button
+              className="w-full bg-[#0e2f3c] hover:bg-[#0e273c] text-white py-6"
+              onClick={handleContinue} // Attach the handler
+            >
+              Continue
+            </Button>
+
+            {/* Conditionally render Sign In with Password Button for 'signin' flow */}
+            {flowType === 'signin' && (
+              <Button
+                variant="outline"
+                className="w-full bg-[#e09f3e] hover:bg-[#d08f2e] text-[#0e2f3c] border-[#e09f3e] hover:border-[#d08f2e] py-6"
+                onClick={handleSignInWithPassword} // Attach the handler
+              >
+                Sign In with Password
+              </Button>
+            )}
+
+            {/* Conditionally render Contact Help Center link for 'forgot' flow */}
+            {flowType === 'forgot' && (
+               <p className="mt-4 text-center text-sm text-[#4f4f4f]">
+                 Still can't log in?{' '}
+                 <Link href="/help" className="underline font-semibold text-[#0e2f3c] hover:text-[#0a2530]">
+                   Contact our help center
+                 </Link>
+               </p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

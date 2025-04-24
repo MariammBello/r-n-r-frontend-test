@@ -1,10 +1,24 @@
 "use client";
 
+"use client"; // Removed duplicate "use client"
+
 import Image from "next/image";
 import { useState } from "react";
+import { Input } from "@/components/ui/input"; // Import Input
+import { Button } from "@/components/ui/button"; // Import Button
+import { useRouter } from 'next/navigation'; // Import useRouter
 
-export default function Signin() {
+// Renamed component for clarity
+export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
+  const router = useRouter(); // Get router instance
+
+  // TODO: Add API call here to actually initiate password reset
+  const handleContinue = () => {
+    console.log("Forgot password for:", email);
+    // Navigate to confirmation page with parameters
+    router.push(`/auth/confirmation?flowType=forgot&email=${encodeURIComponent(email)}`);
+  };
 
   return (
     <div className="flex h-screen font-sans flex-col sm:flex-row">
@@ -41,28 +55,39 @@ export default function Signin() {
           height={50}
           className="transition-transform duration-300 ease-out hover:scale-110 mb-5"
         />
-      
-        <h1 className="text-2xl font-bold text-amber-500 mb-4 font-bricolage">
-          Forgot your password?
-        </h1>
-        {/* {email} */}
-        <div className="flex flex-col mb-4 w-64 sm: ">
-          <label htmlFor="email" className="font-medium mb-2">
-            Enter your email address
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="john@xyz.com"
-            className="border rounded-lg p-2"
-          />
-        </div>
-        <button className="w-64 bg-slate-800 text-white py-2 rounded-lg mt-8 hover:bg-amber-500 hover:text-slate-800">
-          Continue
-        </button>
-        
+        {/* Form Content Wrapper */}
+        <div className="w-full max-w-md">
+          {/* Heading */}
+          <h1 className="text-[#e09f3e] text-3xl font-medium mb-8 text-center">
+            Forgot your password?
+          </h1>
 
+          {/* Form elements matching the image */}
+          <div className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-[#282828] mb-1">
+                Enter email address
+              </label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="john@xyz.com"
+                className="w-full border-[#d9d9d9]" // Style consistent with sign-in
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+
+            {/* Continue Button */}
+            <Button
+              className="w-full bg-[#0e2f3c] hover:bg-[#0e273c] text-white py-6"
+              onClick={handleContinue}
+              // disabled={isLoading} // Add loading state if needed
+            >
+              Continue
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );
