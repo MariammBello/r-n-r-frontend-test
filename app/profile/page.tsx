@@ -19,9 +19,19 @@ export default function ProfilePage() {
 
   const [isEditing, setIsEditing] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // Helper function to split name (can be improved for edge cases)
+  const getNames = (fullName: string | undefined | null): { firstName: string, lastName: string } => {
+    const names = fullName?.trim().split(' ') || [];
+    const firstName = names[0] || '';
+    const lastName = names.slice(1).join(' ') || ''; // Handle multiple last names
+    return { firstName, lastName };
+  };
+
   // Initialize formData based on user context or default values
+  const initialNames = getNames(user?.name);
   const [formData, setFormData] = useState({
-    name: user?.name || '', // Use user data from context
+    firstName: initialNames.firstName, // Use split name
+    lastName: initialNames.lastName,   // Use split name
     email: user?.email || '',
     status: user?.role || 'Wanderer', // Example mapping
     avatarUrl: user?.avatar || '',
@@ -32,12 +42,12 @@ export default function ProfilePage() {
     phoneNumber: "8012345678", // Placeholder
     emergencyCountryCode: "+234", // Placeholder
     emergencyNumber: "812345678", // Placeholder
-    verificationType: "International Passport", // Placeholder
+    verificationType: "International Passport" as "International Passport" | "Driver's License" | "National ID" | undefined, // Reverted type assertion
     idNumber: "", // Placeholder
     // Add other fields from PersonalInfoFormData interface as needed
     country: "Nigeria", // Placeholder
     languages: ["English"], // Placeholder
-    petOwner: "No", // Placeholder
+    petOwner: "No" as "Yes" | "No" | undefined, // Explicitly type the placeholder
     address: "123 Main St", // Placeholder
     state: "Lagos", // Placeholder
     city: "Ikeja", // Placeholder
@@ -56,13 +66,15 @@ export default function ProfilePage() {
       router.push('/auth/login');
     }
     // Update formData when user data is available
-    if (user) {
-       setFormData(prev => ({
-         ...prev,
-         name: user.name || prev.name,
-         email: user.email || prev.email,
-         status: user.role || prev.status, // Assuming role maps to status
-         avatarUrl: user.avatar || prev.avatarUrl,
+     if (user) {
+        const currentNames = getNames(user.name);
+        setFormData(prev => ({
+          ...prev,
+          firstName: currentNames.firstName || prev.firstName, // Update split name
+          lastName: currentNames.lastName || prev.lastName,   // Update split name
+          email: user.email || prev.email,
+          status: user.role || prev.status, // Assuming role maps to status
+          avatarUrl: user.avatar || prev.avatarUrl,
          // Correctly map boolean to string literal type
          verificationStatus: user.verified ? 'Verified' : 'Not Verified' as 'Verified' | 'Not Verified' | 'Pending' | undefined,
        }));
@@ -130,14 +142,14 @@ export default function ProfilePage() {
         </button>
 
         {/* Sidebar Component - Pass user data */}
-        <ProfileSidebar
-           isOpen={isSidebarOpen}
-           onClose={() => setIsSidebarOpen(false)}
-           userData={{ // Pass data derived from context/state
-             name: formData.name || '',
-             email: formData.email || '',
-             status: formData.status || '',
-             avatarUrl: formData.avatarUrl,
+         <ProfileSidebar
+            isOpen={isSidebarOpen}
+            onClose={() => setIsSidebarOpen(false)}
+            userData={{ // Pass data derived from context/state
+              name: `${formData.firstName || ''} ${formData.lastName || ''}`.trim(), // Reconstruct name for sidebar
+              email: formData.email || '',
+              status: formData.status || '',
+              avatarUrl: formData.avatarUrl,
              isVerified: formData.verificationStatus === 'Verified',
            }}
            // Pass wallet data later

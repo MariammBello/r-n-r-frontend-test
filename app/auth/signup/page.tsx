@@ -156,19 +156,7 @@ export default function SignUpPage() {
                 <option value="other">Other</option>
                 <option value="prefer_not_to_say">Prefer not to say</option>
               </select>
-              {/* Example using shadcn/ui Select (uncomment and adapt if available)
-              <Select value={gender} onValueChange={setGender}>
-                <SelectTrigger className="w-full border-[#d9d9d9]">
-                  <SelectValue placeholder="Choose" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="female">Female</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                  <SelectItem value="prefer_not_to_say">Prefer not to say</SelectItem>
-                </SelectContent>
-              </Select>
-              */}
+              {/* Example using shadcn/ui Select removed to fix syntax errors */}
             </div>
 
              <div>

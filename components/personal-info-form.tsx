@@ -19,7 +19,8 @@ import { cn } from "@/lib/utils"; // Import cn utility
 // Align this with the actual user profile data structure from the backend (user_model.js)
 interface PersonalInfoFormData {
   // Fields likely directly from User context/model
-  name?: string;
+  firstName?: string; // Changed from name
+  lastName?: string;  // Added
   email?: string; // Usually not editable directly here
   status?: string; // Derived from role?
   avatarUrl?: string;
@@ -37,13 +38,13 @@ interface PersonalInfoFormData {
   city?: string;
   zipcode?: string;
   phoneCountryCode?: string;
-  phoneNumber?: string;
+  phoneNumber?: string; // Reverted from phone_number1
   emergencyCountryCode?: string;
-  emergencyNumber?: string;
+  emergencyNumber?: string; // Reverted from phone_number2
   countriesVisited?: string[]; // Tags?
   countriesToVisit?: string[]; // Tags?
   about?: string;
-  verificationType?: 'International Passport' | "Driver's License" | 'National ID'; // Use specific values
+  verificationType?: 'International Passport' | "Driver's License" | 'National ID'; // Reverted from 'NIN'
   idNumber?: string;
   // idFile?: File | null; // File upload state might be handled separately
 }
@@ -130,13 +131,20 @@ export default function PersonalInfoForm({
         </div>
         <div className="flex-1 text-center md:text-left">
           {isEditing ? (
-            <div className="mb-2">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" name="name" value={formData.name || ''} onChange={onFormDataChange} className="text-xl font-semibold" />
+            <div className="mb-2 grid grid-cols-1 sm:grid-cols-2 gap-4"> {/* Use grid for side-by-side */}
+              <div>
+                <Label htmlFor="firstName">First Name</Label>
+                <Input id="firstName" name="firstName" value={formData.firstName || ''} onChange={onFormDataChange} className="text-base font-semibold" /> {/* Adjusted font size */}
+              </div>
+              <div>
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input id="lastName" name="lastName" value={formData.lastName || ''} onChange={onFormDataChange} className="text-base font-semibold" /> {/* Adjusted font size */}
+              </div>
             </div>
           ) : (
             <h2 className="text-xl font-semibold text-[#0e2f3c] mb-1">
-              {formData.name || 'User Name'} {formData.email && <FaCheckCircle className="inline text-green-500 ml-1" />}
+              {/* Display first and last name */}
+              {formData.firstName || 'First'} {formData.lastName || 'Last'} {formData.email && <FaCheckCircle className="inline text-green-500 ml-1" />}
             </h2>
           )}
           {isEditing ? (
@@ -383,7 +391,7 @@ export default function PersonalInfoForm({
                    <SelectContent>
                      <SelectItem value="International Passport">International Passport</SelectItem>
                      <SelectItem value="Driver's License">Driver's License</SelectItem>
-                     <SelectItem value="National ID">National ID</SelectItem>
+                     <SelectItem value="National ID">National ID</SelectItem> {/* Reverted from 'NIN' */}
                    </SelectContent>
                  </Select>
                ) : (<p className="mt-1 text-base text-gray-900">{formData.verificationType || '-'}</p>)}
