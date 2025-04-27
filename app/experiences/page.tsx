@@ -19,10 +19,8 @@ export default function ExperiencesPage() {
         </section>
 
         {/* Work in Progress Section */}
-        <WorkInProgress
-          title="Experiences"
-          description="We're currently crafting exciting experiences for you to explore. Soon you'll be able to immerse yourself in Africa's rich culture, breathtaking nature, and unforgettable adventures."
-        />
+        {/* The description is now handled inside the WorkInProgress component */}
+        <WorkInProgress pageName="Experiences" />
       </main>
 
       {/* Footer */}

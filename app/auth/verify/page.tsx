@@ -1,7 +1,7 @@
-"use client"; // Removed duplicate "use client"
+"use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, Suspense } from "react"; // Import Suspense
 import { Input } from "@/components/ui/input"; // Import Input
 import { Button } from "@/components/ui/button"; // Import Button
 import Link from "next/link"; // Import Link for routing
@@ -9,8 +9,8 @@ import { useSearchParams, useRouter } from 'next/navigation'; // Import useSearc
 import { useAuth } from "@/contexts/auth-context"; // Import auth context (removed useSampleUser)
 import { verifyOtp as apiVerifyOtp } from "@/lib/api/auth"; // Import the mock API function
 
-// Renamed component for clarity
-export default function ConfirmationPage() {
+// Define the form content as a separate component
+const VerifyFormContent = () => {
   const [otp, setOtp] = useState(""); // State for OTP input
   const [isLoading, setIsLoading] = useState(false); // Add loading state
   const [error, setError] = useState<string | null>(null); // Add error state
@@ -173,5 +173,14 @@ export default function ConfirmationPage() {
         </div>
       </div>
     </div>
+  );
+};
+
+// Main page component wraps the form content in Suspense
+export default function ConfirmationPage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen justify-center items-center"><p>Loading verification form...</p></div>}>
+      <VerifyFormContent />
+    </Suspense>
   );
 }

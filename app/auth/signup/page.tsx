@@ -1,100 +1,67 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, Suspense } from "react"; // Import Suspense
 import { useRouter } from 'next/navigation';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 // Assuming you have a Select component in ui, otherwise use standard select
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useAuth } from "@/contexts/auth-context"; // Removed useSampleUser
-import { useSearchParams } from 'next/navigation'; // Import useSearchParams
-import { signupUser as apiSignupUser } from "@/lib/api/auth"; // Import the mock API function
+import { useAuth } from "@/contexts/auth-context";
+import { useSearchParams } from 'next/navigation';
+import { signupUser as apiSignupUser } from "@/lib/api/auth";
 
-export default function SignUpPage() {
-  const router = useRouter();
-  const { login } = useAuth();
-  // const sampleUser = useSampleUser(); // Removed sample user
-  const searchParams = useSearchParams();
-  const email = searchParams.get('email'); // Get email from URL
+// Define the form content as a separate component to easily wrap in Suspense
+// Moved this component definition outside the main SignUpPage component
+const SignUpFormContent = () => {
+  // All the state and handlers that were previously directly in SignUpPage
+    const router = useRouter();
+    const { login } = useAuth();
+    const searchParams = useSearchParams();
+    const email = searchParams.get('email');
 
-  // State for form fields
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [gender, setGender] = useState("");
-  const [nationality, setNationality] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // Add loading state
-  const [error, setError] = useState<string | null>(null); // Add error state
-  // const [showPassword, setShowPassword] = useState(false); // Optional: for show/hide password
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [gender, setGender] = useState("");
+    const [nationality, setNationality] = useState("");
+    const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-  // Placeholder submit handler
-  const handleSignupSubmit = async () => { // Make async
-    setIsLoading(true); // Set loading true
-    setError(null); // Clear previous errors
+    const handleSignupSubmit = async () => {
+      setIsLoading(true);
+      setError(null);
 
-    const userData = {
-      first_name: firstName, // Match backend service naming
-      last_name: lastName,   // Match backend service naming
-      email: email,          // Include email from previous step
-      gender,
-      nationality,
-      password
+      const userData = {
+        first_name: firstName,
+        last_name: lastName,
+        email: email, // Use email from searchParams
+        gender,
+        nationality,
+        password
+      };
+
+      console.log("Signing up with:", userData);
+      const response = await apiSignupUser(userData);
+
+      if (response.success) {
+        console.log("Mock signup success, logging in and redirecting home...");
+        login({
+           id: 'new-user-' + Date.now(),
+           name: `${firstName} ${lastName}`,
+           email: email || 'newuser@example.com',
+           avatar: '/placeholder.svg?height=40&width=40',
+           role: 'New User',
+           verified: true
+        });
+        router.push('/');
+      } else {
+        setError(response.error || 'Signup failed. Please try again.');
+        setIsLoading(false);
+      }
     };
 
-    console.log("Signing up with:", userData);
-
-    // Call the mock API function
-    const response = await apiSignupUser(userData);
-
-    if (response.success) {
-      // Signup successful (mock response)
-      // Simulate login immediately after signup and redirect home
-      console.log("Mock signup success, logging in and redirecting home...");
-      login({ // Manually create a user object for the context
-         id: 'new-user-' + Date.now(), // Generate temporary ID
-         name: `${firstName} ${lastName}`,
-         email: email || 'newuser@example.com', // Use email if available
-         avatar: '/placeholder.svg?height=40&width=40', // Default avatar
-         role: 'New User', // Default role
-         verified: true // Assume verified after completing signup form
-      });
-      router.push('/'); // Redirect to homepage
-      // Don't set isLoading false here as we are navigating away
-    } else {
-      // Handle signup failure
-      setError(response.error || 'Signup failed. Please try again.');
-      setIsLoading(false); // Set loading false on error
-    }
-  };
-
-  return (
-    <div className="flex h-screen font-sans flex-col sm:flex-row">
-      {/* Left side - Consistent with other auth pages */}
-      <div className="w-full sm:w-1/2 relative hidden sm:block">
-        <Image
-          src="/Images/flightimage.png"
-          alt="Aerial view with world map"
-          fill
-          className="object-cover"
-        />
-        <Image
-          src="/Images/plane.png"
-          alt="plane"
-          width={800}
-          height={100}
-          className="absolute top-20 left-20 z-10"
-        />
-        <Image
-          src="/Images/logo2.png"
-          alt="roots n routes logo"
-          width={200}
-          height={50}
-          className="absolute bottom-10 right-14 z-10"
-        />
-      </div>
-
-      {/* Right side - Form */}
+    return (
       <div className="w-full sm:w-1/2 flex flex-col justify-center items-center p-6 sm:p-14">
         {/* Logo */}
         <Image
@@ -208,6 +175,40 @@ export default function SignUpPage() {
           </div>
         </div>
       </div>
+    );
+  };
+
+export default function SignUpPage() {
+  return (
+    <div className="flex h-screen font-sans flex-col sm:flex-row">
+      {/* Left side - Consistent with other auth pages */}
+      <div className="w-full sm:w-1/2 relative hidden sm:block">
+        <Image
+          src="/Images/flightimage.png"
+          alt="Aerial view with world map"
+          fill
+          className="object-cover"
+        />
+        <Image
+          src="/Images/plane.png"
+          alt="plane"
+          width={800}
+          height={100}
+          className="absolute top-20 left-20 z-10"
+        />
+        <Image
+          src="/Images/logo2.png"
+          alt="roots n routes logo"
+          width={200}
+          height={50}
+          className="absolute bottom-10 right-14 z-10"
+        />
+      </div>
+
+      {/* Right side - Form wrapped in Suspense */}
+      <Suspense fallback={<div className="w-full sm:w-1/2 flex justify-center items-center"><p>Loading form...</p></div>}>
+        <SignUpFormContent />
+      </Suspense>
     </div>
   );
 }

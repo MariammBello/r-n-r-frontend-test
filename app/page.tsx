@@ -13,11 +13,12 @@ import AccommodationsSection from "@/components/accommodations-section"
 import VacationPlanningBanner from "@/components/vacation-planning-banner"
 import AffordableFlightsSection from "@/components/affordable-flights-section"
 import NaijaExperienceSection from "@/components/naija-experience-section"
-import  SideBar from "@/components/sidebar"
+// Removed unused SideBar import
 import RootsBlogSection from "@/components/roots-blog-section"
 import Footer from "@/components/footer"
 import { useAuth } from "@/contexts/auth-context"
 import { Import } from "lucide-react"
+import { Suspense } from "react"; // Import Suspense
 
 export default function LandingPage() {
   const { isAuthenticated } = useAuth()
@@ -46,8 +47,10 @@ export default function LandingPage() {
       {/* Destinations Section */}
       <DestinationsSection />
 
-      {/* Booking Section */}
-      <BookingSection />
+      {/* Booking Section - Wrapped in Suspense */}
+      <Suspense fallback={<div className="w-full my-[72px] px-[60px] text-center"><p>Loading booking options...</p></div>}>
+        <BookingSection />
+      </Suspense>
 
       {/* Bundle Deals Section */}
       <BundleDealsSection />

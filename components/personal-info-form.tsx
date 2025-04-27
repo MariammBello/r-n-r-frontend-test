@@ -87,7 +87,8 @@ export default function PersonalInfoForm({
     } else if (!formData.dob) {
         setDate(undefined); // Clear local state if formData.dob is cleared
     }
-  }, [formData.dob]); // Rerun effect when formData.dob changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.dob, date]); // Rerun effect when formData.dob changes or local date changes
 
 
   const handleAvatarEdit = () => {

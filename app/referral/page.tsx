@@ -51,9 +51,10 @@ const ReferralsAndRewards: React.FC = () => {
       </Head>
 
       {/* Navigation breadcrumb */}
-      
+
       {/* Breadcrumb Navigation */}
-      <div className={`py-3 px-4 flex items-center border-b ${viewStyle === 'dotted' ? 'border-blue-100' : 'border-gray-100'}`}>
+      {/* Removed conditional class based on viewStyle as it's currently always 'solid' */}
+      <div className={`py-3 px-4 flex items-center border-b border-gray-100`}>
         <Link href="/" className="text-gray-500 hover:text-gray-700">
 
           <Home size={18} />
@@ -79,16 +80,13 @@ const ReferralsAndRewards: React.FC = () => {
         <div className="mb-8 border-b border-gray-200 pb-6">
           <div className="mb-2 font-medium">Referral code</div>
           <div className="flex">
-          <input 
-  type="number" 
-  value={referralCode} 
-  onChange={(e) => setReferralCode(e.target.value === '' ? '' : Number(e.target.value))}
-/>
-
-               
-              className="border border-gray-300 rounded-l px-3 py-2 flex-grow"
+            <input
+              type="text" // Changed type to text as referral codes can have letters
+              value={referralCode}
+              readOnly // Make readOnly instead of trying to set state
+              className="border border-gray-300 rounded-l px-3 py-2 flex-grow" // Moved className inside
             />
-            <button 
+            <button
               onClick={handleCopyReferralCode}
               className="bg-gray-800 text-white px-4 py-2 rounded-r flex items-center"
             >

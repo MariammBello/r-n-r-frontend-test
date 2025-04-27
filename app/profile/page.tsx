@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react"; // Import useEffect
+import { useState, useEffect, Suspense, useMemo } from "react"; // Import useEffect, Suspense, and useMemo
 import { useSearchParams, useRouter } from 'next/navigation'; // Import useRouter
 import { FaCheckCircle, FaEdit, FaBars, FaTimes } from "react-icons/fa";
 import Link from "next/link";
@@ -11,14 +11,16 @@ import PersonalInfoForm from "@/components/personal-info-form";
 import WorkInProgress from "@/components/work-in-progress";
 import { useAuth } from "@/contexts/auth-context"; // Import useAuth
 
-export default function ProfilePage() {
+// Component containing the main profile content logic, dependent on searchParams
+const ProfileContent = () => {
   const router = useRouter();
-  const { user, isAuthenticated } = useAuth(); // Get auth state and user data (removed isLoading)
+  const { user, isAuthenticated } = useAuth();
   const searchParams = useSearchParams();
   const currentSection = searchParams.get('section') || 'personal-info';
 
   const [isEditing, setIsEditing] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // Sidebar state is managed in the parent for now, might need adjustment
+  // const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   // Helper function to split name (can be improved for edge cases)
   const getNames = (fullName: string | undefined | null): { firstName: string, lastName: string } => {
     const names = fullName?.trim().split(' ') || [];
@@ -125,42 +127,11 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
-      {/* Header - Full width at the top */}
-      <Header />
+    // Main Content Area - This part depends on searchParams
+    <main className="w-full md:w-3/4 lg:w-4/5 p-4 md:p-8 md:pl-72"> {/* Added padding-left to account for fixed sidebar width */}
 
-      {/* Main content area with Sidebar and Form */}
-      <div className="flex flex-1 container mx-auto py-8 px-4 md:px-0"> {/* Added container and padding */}
-
-        {/* Toggle Button for Sidebar (Mobile) */}
-        {/* Consider moving this inside the sidebar component later */}
-        <button
-          className="md:hidden fixed top-20 left-4 z-50 p-2 bg-white rounded-md shadow" // Adjusted positioning
-          onClick={() => setIsSidebarOpen(true)}
-        >
-          <FaBars className="text-xl" />
-        </button>
-
-        {/* Sidebar Component - Pass user data */}
-         <ProfileSidebar
-            isOpen={isSidebarOpen}
-            onClose={() => setIsSidebarOpen(false)}
-            userData={{ // Pass data derived from context/state
-              name: `${formData.firstName || ''} ${formData.lastName || ''}`.trim(), // Reconstruct name for sidebar
-              email: formData.email || '',
-              status: formData.status || '',
-              avatarUrl: formData.avatarUrl,
-             isVerified: formData.verificationStatus === 'Verified',
-           }}
-           // Pass wallet data later
-        />
-
-
-        {/* Main Content Area */}
-        <main className="w-full md:w-3/4 lg:w-4/5 p-4 md:p-8 md:pl-72"> {/* Added padding-left to account for fixed sidebar width */}
-
-          {/* Breadcrumbs (Placeholder) */}
-          <div className="mb-4 text-sm text-gray-500">
+      {/* Breadcrumbs (Placeholder) */}
+      <div className="mb-4 text-sm text-gray-500">
              {/* TODO: Make Breadcrumbs dynamic based on currentSection */}
              Breadcrumbs Placeholder
           </div>
@@ -205,6 +176,65 @@ export default function ProfilePage() {
             )}
           </div>
         </main>
+  );
+};
+
+
+export default function ProfilePage() {
+  const { user, isAuthenticated } = useAuth(); // Auth check can happen here
+  const router = useRouter();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar state managed here
+
+  // Redirect if not authenticated (can happen early)
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+    }
+  }, [isAuthenticated, router]);
+
+  // Simplified initial data for sidebar before ProfileContent loads fully
+  const sidebarUserData = useMemo(() => ({
+    name: user?.name || 'Loading...',
+    email: user?.email || '',
+    status: user?.role || '',
+    avatarUrl: user?.avatar || '',
+    isVerified: user?.verified || false,
+  }), [user]);
+
+
+  if (!isAuthenticated) {
+    return <div className="flex justify-center items-center min-h-screen">Redirecting...</div>;
+  }
+
+  return (
+    <div className="flex flex-col min-h-screen bg-gray-100">
+      {/* Header - Full width at the top */}
+      <Header />
+
+      {/* Main content area with Sidebar and Form */}
+      <div className="flex flex-1 container mx-auto py-8 px-4 md:px-0"> {/* Added container and padding */}
+
+        {/* Toggle Button for Sidebar (Mobile) */}
+        <button
+          className="md:hidden fixed top-20 left-4 z-50 p-2 bg-white rounded-md shadow" // Adjusted positioning
+          onClick={() => setIsSidebarOpen(true)}
+        >
+          <FaBars className="text-xl" />
+        </button>
+
+        {/* Sidebar Component - Pass user data */}
+         <ProfileSidebar
+            isOpen={isSidebarOpen}
+            onClose={() => setIsSidebarOpen(false)}
+            userData={sidebarUserData} // Use memoized data
+           // Pass wallet data later
+        />
+
+        {/* Main Content Area wrapped in Suspense */}
+        <Suspense fallback={<main className="w-full md:w-3/4 lg:w-4/5 p-4 md:p-8 md:pl-72"><p>Loading profile section...</p></main>}>
+          <ProfileContent />
+        </Suspense>
+
       </div>
 
       {/* Footer - Full width at the bottom */}

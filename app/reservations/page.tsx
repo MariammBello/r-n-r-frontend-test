@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { Home, FileText, MessageCircle } from 'lucide-react';
+import Footer from '@/components/footer'; // Added Footer import
 
 type TabType = 'Bookings' | 'Reservations' | 'Wishlist';
 

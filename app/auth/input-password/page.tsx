@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, Suspense } from "react"; // Import Suspense
 import { useSearchParams } from 'next/navigation'; // Import useSearchParams
 import { Input } from "@/components/ui/input"; // Import Input
 import { Button } from "@/components/ui/button"; // Import Button
@@ -13,7 +13,8 @@ import { loginUser as apiLoginUser } from "@/lib/api/auth"; // Import the mock A
 // TODO: Add logic for password visibility toggle if needed
 // import { Eye, EyeOff } from 'lucide-react';
 
-export default function InputPasswordPage() {
+// Define the form content as a separate component to easily wrap in Suspense
+const InputPasswordFormContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter(); // Get router instance
   const { login } = useAuth(); // Get login function
@@ -45,6 +46,77 @@ export default function InputPasswordPage() {
   };
 
   return (
+    <div className="w-full sm:w-1/2 flex flex-col justify-center items-center p-6 sm:p-14">
+      {/* Logo */}
+      <Image
+        src="/Images/logo.svg"
+        alt="roots n routes logo"
+        width={100}
+        height={50}
+        className="transition-transform duration-300 ease-out hover:scale-110 mb-5"
+      />
+      {/* Form Content Wrapper */}
+      <div className="w-full max-w-md">
+        {/* Heading */}
+        <h1 className="text-[#e09f3e] text-3xl font-medium mb-8 text-center">
+          Input your password
+        </h1>
+
+        {/* Form elements matching the image */}
+        <div className="space-y-6">
+          <div>
+            {/* Display Email */}
+            {email && (
+              <p className="block text-sm font-medium text-[#282828] mb-1 text-center">
+                {email}
+              </p>
+            )}
+            {/* Password Input */}
+            <div className="relative">
+               <Input
+                  id="password"
+                  type="password" // Use state for type if implementing show/hide
+                  placeholder="Enter Password"
+                  className="w-full border-[#d9d9d9] pr-10" // Add padding for potential icon
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+               />
+               {/* TODO: Add show/hide password icon button if needed
+               <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+               >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+               </button>
+               */}
+            </div>
+            {/* Forgot Password Link */}
+            <div className="text-right mt-2">
+              <Link href="/auth/forgot-password" className="text-sm font-medium text-[#0e2f3c] hover:underline">
+                Forgot password?
+              </Link>
+            </div>
+          </div>
+
+          {/* Sign In Button */}
+          <Button
+            className="w-full bg-[#0e2f3c] hover:bg-[#0e273c] text-white py-6"
+            onClick={handleSignIn}
+            disabled={isLoading} // Disable button while loading
+          >
+            {isLoading ? 'Signing In...' : 'Sign In'}
+          </Button>
+          {/* Display error message if login fails */}
+          {error && <p className="text-red-500 text-sm text-center mt-2">{error}</p>}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default function InputPasswordPage() {
+  return (
     <div className="flex h-screen font-sans flex-col sm:flex-row">
       {/* Left side - Consistent with other auth pages */}
       <div className="w-full sm:w-1/2 relative hidden sm:block">
@@ -70,73 +142,10 @@ export default function InputPasswordPage() {
         />
       </div>
 
-      {/* Right side - Form */}
-      <div className="w-full sm:w-1/2 flex flex-col justify-center items-center p-6 sm:p-14">
-        {/* Logo */}
-        <Image
-          src="/Images/logo.svg"
-          alt="roots n routes logo"
-          width={100}
-          height={50}
-          className="transition-transform duration-300 ease-out hover:scale-110 mb-5"
-        />
-        {/* Form Content Wrapper */}
-        <div className="w-full max-w-md">
-          {/* Heading */}
-          <h1 className="text-[#e09f3e] text-3xl font-medium mb-8 text-center">
-            Input your password
-          </h1>
-
-          {/* Form elements matching the image */}
-          <div className="space-y-6">
-            <div>
-              {/* Display Email */}
-              {email && (
-                <p className="block text-sm font-medium text-[#282828] mb-1 text-center">
-                  {email}
-                </p>
-              )}
-              {/* Password Input */}
-              <div className="relative">
-                 <Input
-                    id="password"
-                    type="password" // Use state for type if implementing show/hide
-                    placeholder="Enter Password"
-                    className="w-full border-[#d9d9d9] pr-10" // Add padding for potential icon
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                 />
-                 {/* TODO: Add show/hide password icon button if needed
-                 <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                 >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                 </button>
-                 */}
-              </div>
-              {/* Forgot Password Link */}
-              <div className="text-right mt-2">
-                <Link href="/auth/forgot-password" className="text-sm font-medium text-[#0e2f3c] hover:underline">
-                  Forgot password?
-                </Link>
-              </div>
-            </div>
-
-            {/* Sign In Button */}
-            <Button
-              className="w-full bg-[#0e2f3c] hover:bg-[#0e273c] text-white py-6"
-              onClick={handleSignIn}
-              disabled={isLoading} // Disable button while loading
-            >
-              {isLoading ? 'Signing In...' : 'Sign In'}
-            </Button>
-            {/* Display error message if login fails */}
-            {error && <p className="text-red-500 text-sm text-center mt-2">{error}</p>}
-          </div>
-        </div>
-      </div>
+      {/* Right side - Form wrapped in Suspense */}
+      <Suspense fallback={<div className="w-full sm:w-1/2 flex justify-center items-center"><p>Loading form...</p></div>}>
+        <InputPasswordFormContent />
+      </Suspense>
     </div>
   );
 }
