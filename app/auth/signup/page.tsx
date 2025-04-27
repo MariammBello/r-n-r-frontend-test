@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState, Suspense } from "react"; // Import Suspense
 import { useRouter } from 'next/navigation';
 import { Input } from "@/components/ui/input";
@@ -10,6 +9,19 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth-context";
 import { useSearchParams } from 'next/navigation';
 import { signupUser as apiSignupUser } from "@/lib/api/auth";
+import AuthFormContainer from "@/components/auth-form-container"; // Import the new container
+import { NATIONALITIES } from "@/lib/constants/nationalities"; // Import nationalities
+import { Eye, EyeOff, Loader2 } from 'lucide-react'; // Import icons, add Loader2
+import React from 'react'; // Import React for event types
+
+// Interface for form values (good practice, even with separate states)
+interface SignUpFormValues {
+  firstName: string;
+  lastName: string;
+  gender: string;
+  nationality: string;
+  password: string;
+}
 
 // Define the form content as a separate component to easily wrap in Suspense
 // Moved this component definition outside the main SignUpPage component
@@ -25,12 +37,37 @@ const SignUpFormContent = () => {
     const [gender, setGender] = useState("");
     const [nationality, setNationality] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false); // State for password visibility
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null); // General API error
+    const [errors, setErrors] = useState<Record<string, string>>({}); // Field-specific validation errors
+
+    // Basic validation function
+    const validateForm = () => {
+      const newErrors: Record<string, string> = {};
+      if (!firstName) newErrors.firstName = "First name is required.";
+      if (!lastName) newErrors.lastName = "Last name is required.";
+      if (!gender) newErrors.gender = "Gender is required.";
+      if (!nationality) newErrors.nationality = "Nationality is required.";
+      if (!password) {
+        newErrors.password = "Password is required.";
+      } else if (password.length < 8) { // Example: Basic password strength
+        newErrors.password = "Password must be at least 8 characters long.";
+      }
+      // Add more validation rules as needed (e.g., password complexity)
+      setErrors(newErrors);
+      return Object.keys(newErrors).length === 0; // Return true if no errors
+    };
 
     const handleSignupSubmit = async () => {
+      setError(null); // Clear previous general errors
+      setErrors({}); // Clear previous validation errors
+
+      if (!validateForm()) {
+        return; // Stop submission if validation fails
+      }
+
       setIsLoading(true);
-      setError(null);
 
       const userData = {
         first_name: firstName,
@@ -62,48 +99,35 @@ const SignUpFormContent = () => {
     };
 
     return (
-      <div className="w-full sm:w-1/2 flex flex-col justify-center items-center p-6 sm:p-14">
-        {/* Logo */}
-        <Image
-          src="/Images/logo.svg"
-          alt="roots n routes logo"
-          width={100}
-          height={50}
-          className="transition-transform duration-300 ease-out hover:scale-110 mb-5"
-        />
-        {/* Form Content Wrapper */}
-        <div className="w-full max-w-md">
-          {/* Heading */}
-          <h1 className="text-[#e09f3e] text-3xl font-medium mb-8 text-center">
-            Complete Sign Up
-          </h1>
-
-          {/* Form elements matching the image */}
-          <div className="space-y-4"> {/* Adjusted spacing */}
-            <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-[#282828] mb-1">
+      <AuthFormContainer title="Complete Sign Up">
+        {/* Form elements matching the image */}
+        <div className="space-y-4"> {/* Adjusted spacing */}
+          <div>
+            <label htmlFor="firstName" className="block text-sm font-medium text-[#282828] mb-1">
                 First Name
               </label>
               <Input
                 id="firstName"
                 type="text"
-                className="w-full border-[#d9d9d9]"
+                className={`w-full border-[#d9d9d9] ${errors.firstName ? 'border-red-500' : ''}`}
                 value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFirstName(e.target.value)}
               />
+              {errors.firstName && <p className="text-red-500 text-xs mt-1" aria-live="polite">{errors.firstName}</p>}
             </div>
 
             <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-[#282828] mb-1">
+            <label htmlFor="lastName" className="block text-sm font-medium text-[#282828] mb-1">
                 Last Name
               </label>
               <Input
                 id="lastName"
                 type="text"
-                className="w-full border-[#d9d9d9]"
+                className={`w-full border-[#d9d9d9] ${errors.lastName ? 'border-red-500' : ''}`}
                 value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLastName(e.target.value)}
               />
+              {errors.lastName && <p className="text-red-500 text-xs mt-1" aria-live="polite">{errors.lastName}</p>}
             </div>
 
             <div>
@@ -114,8 +138,8 @@ const SignUpFormContent = () => {
               <select
                 id="gender"
                 value={gender}
-                onChange={(e) => setGender(e.target.value)}
-                className="w-full border border-[#d9d9d9] rounded-md px-3 py-2 bg-white text-sm h-10" // Basic styling
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setGender(e.target.value)}
+                className={`w-full border border-[#d9d9d9] rounded-md px-3 py-2 bg-white text-sm h-10 ${errors.gender ? 'border-red-500' : ''}`} // Basic styling
               >
                 <option value="" disabled>Choose</option>
                 <option value="male">Male</option>
@@ -123,6 +147,7 @@ const SignUpFormContent = () => {
                 <option value="other">Other</option>
                 <option value="prefer_not_to_say">Prefer not to say</option>
               </select>
+              {errors.gender && <p className="text-red-500 text-xs mt-1" aria-live="polite">{errors.gender}</p>}
               {/* Example using shadcn/ui Select removed to fix syntax errors */}
             </div>
 
@@ -134,16 +159,17 @@ const SignUpFormContent = () => {
                <select
                 id="nationality"
                 value={nationality}
-                onChange={(e) => setNationality(e.target.value)}
-                className="w-full border border-[#d9d9d9] rounded-md px-3 py-2 bg-white text-sm h-10" // Basic styling
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setNationality(e.target.value)}
+                className={`w-full border border-[#d9d9d9] rounded-md px-3 py-2 bg-white text-sm h-10 ${errors.nationality ? 'border-red-500' : ''}`} // Basic styling
               >
                 <option value="" disabled>Choose</option>
-                {/* TODO: Populate with actual nationalities */}
-                <option value="nigerian">Nigerian</option>
-                <option value="ghanaian">Ghanaian</option>
-                <option value="american">American</option>
-                <option value="british">British</option>
+                {NATIONALITIES.map((nat) => (
+                  <option key={nat.value} value={nat.value}>
+                    {nat.label}
+                  </option>
+                ))}
               </select>
+              {errors.nationality && <p className="text-red-500 text-xs mt-1" aria-live="polite">{errors.nationality}</p>}
             </div>
 
             <div>
@@ -152,14 +178,22 @@ const SignUpFormContent = () => {
               </label>
               <div className="relative">
                  <Input
-                    id="password"
-                    type="password" // Use state for type if implementing show/hide
-                    className="w-full border-[#d9d9d9] pr-10" // Add padding for potential icon
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                  id="password"
+                  type={showPassword ? "text" : "password"} // Dynamically set type
+                  className={`w-full border-[#d9d9d9] pr-10 ${errors.password ? 'border-red-500' : ''}`} // Add padding for icon
+                  value={password}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                  />
-                 {/* TODO: Add show/hide password icon button if needed */}
+                 <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                 >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                 </button>
               </div>
+              {errors.password && <p className="text-red-500 text-xs mt-1" aria-live="polite">{errors.password}</p>}
             </div>
 
             {/* Continue Button */}
@@ -168,47 +202,28 @@ const SignUpFormContent = () => {
               onClick={handleSignupSubmit}
               disabled={isLoading} // Disable button while loading
             >
-              {isLoading ? 'Signing Up...' : 'Continue'}
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Signing Up...
+                </>
+              ) : (
+                'Continue'
+              )}
             </Button>
-            {/* Display error message if signup fails */}
-            {error && <p className="text-red-500 text-sm text-center mt-2">{error}</p>}
+            {/* Display general API error message if signup fails */}
+            {error && <p className="text-red-500 text-sm text-center mt-2" aria-live="assertive">{error}</p>}
           </div>
-        </div>
-      </div>
+      </AuthFormContainer>
     );
   };
 
 export default function SignUpPage() {
+  // The outer div and left panel are now handled by app/auth/layout.tsx
   return (
-    <div className="flex h-screen font-sans flex-col sm:flex-row">
-      {/* Left side - Consistent with other auth pages */}
-      <div className="w-full sm:w-1/2 relative hidden sm:block">
-        <Image
-          src="/Images/flightimage.png"
-          alt="Aerial view with world map"
-          fill
-          className="object-cover"
-        />
-        <Image
-          src="/Images/plane.png"
-          alt="plane"
-          width={800}
-          height={100}
-          className="absolute top-20 left-20 z-10"
-        />
-        <Image
-          src="/Images/logo2.png"
-          alt="roots n routes logo"
-          width={200}
-          height={50}
-          className="absolute bottom-10 right-14 z-10"
-        />
-      </div>
-
-      {/* Right side - Form wrapped in Suspense */}
-      <Suspense fallback={<div className="w-full sm:w-1/2 flex justify-center items-center"><p>Loading form...</p></div>}>
-        <SignUpFormContent />
-      </Suspense>
-    </div>
+    // Right side - Form wrapped in Suspense
+    <Suspense fallback={<div className="w-full sm:w-1/2 flex justify-center items-center"><p>Loading form...</p></div>}>
+      <SignUpFormContent />
+    </Suspense>
   );
 }

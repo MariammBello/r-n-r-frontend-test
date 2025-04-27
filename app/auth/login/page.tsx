@@ -2,11 +2,12 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import Logo from "@/components/logo"
-import { useAuth, useSampleUser } from "@/contexts/auth-context"
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useAuth, useSampleUser } from "@/contexts/auth-context";
+import AuthFormContainer from "@/components/auth-form-container"; // Import the new container
+import React from 'react'; // Import React for event types
+import { Loader2 } from 'lucide-react'; // Import Loader2
 
 export default function SignInPage() {
   const router = useRouter()
@@ -14,6 +15,7 @@ export default function SignInPage() {
   const sampleUser = useSampleUser()
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({}); // Field-specific validation errors
 
   // If already authenticated, redirect to home page
   if (isAuthenticated) {
@@ -21,7 +23,24 @@ export default function SignInPage() {
     return null
   }
 
+  // Basic validation function
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (!email) {
+      newErrors.email = "Email address is required.";
+    } else if (!/\S+@\S+\.\S+/.test(email)) { // Simple email format check
+      newErrors.email = "Please enter a valid email address.";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
+
+
   const handleSignIn = () => {
+    setErrors({}); // Clear previous validation errors
+    if (!validateForm()) {
+      return; // Stop submission if validation fails
+    }
     setIsLoading(true)
 
     // TODO: Add logic here to check if user exists before navigating
@@ -45,64 +64,24 @@ export default function SignInPage() {
     // setIsLoading(false);
   }
 
+  // The outer div and left panel are handled by app/auth/layout.tsx
+  // The right-side container structure is handled by AuthFormContainer
   return (
-    <div className="flex h-screen font-sans flex-col sm:flex-row"> {/* Updated outer div class */}
-      {/* Left side - From confirmation page */}
-      <div className="w-full sm:w-1/2 relative hidden sm:block"> {/* Updated div class */}
-        <Image
-          src="/Images/flightimage.png" // Using /Images/ path
-          alt="Aerial view with world map"
-          fill
-          className="object-cover"
-          // Removed priority prop
-        />
-
-        <Image
-          src="/Images/plane.png" // Using /Images/ path
-          alt="plane"
-          width={800}
-          height={100}
-          className="absolute top-20 left-20 z-10"
-        />
-
-        <Image
-          src="/Images/logo2.png" // Using /Images/ path
-          alt="roots n routes logo"
-          width={200}
-          height={50}
-          className="absolute bottom-10 right-14 z-10"
-        />
-      </div>
-
-      {/* Right side - Login form */}
-      <div className="w-full sm:w-1/2 flex flex-col items-center justify-center p-8 sm:p-14"> {/* Updated div class and padding */}
-        {/* Logo - Placed like confirmation page */}
-        <Image
-          src="/Images/logo.svg"
-          alt="roots n routes logo"
-          width={100}
-          height={50}
-          className="transition-transform duration-300 ease-out hover:scale-110 mb-5"
-        />
-        {/* Form Content Wrapper */}
-        <div className="w-full max-w-md">
-          {/* Removed old logo placements */}
-
-          <h1 className="text-[#e09f3e] text-3xl font-medium mb-8 text-center">Sign in or Create account</h1> {/* Added text-center */}
-
-          <div className="space-y-6">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-[#282828] mb-1">
+    <AuthFormContainer title="Sign in or Create account">
+      <div className="space-y-6">
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-[#282828] mb-1">
                 Enter your email address
               </label>
               <Input
                 id="email"
                 type="email"
                 placeholder="john@xyz.com"
-                className="w-full border-[#d9d9d9]"
+                className={`w-full border-[#d9d9d9] ${errors.email ? 'border-red-500' : ''}`}
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               />
+              {errors.email && <p className="text-red-500 text-xs mt-1" aria-live="polite">{errors.email}</p>}
             </div>
 
             <Button
@@ -110,7 +89,14 @@ export default function SignInPage() {
               onClick={handleSignIn}
               disabled={isLoading}
             >
-              {isLoading ? "Signing in..." : "Continue"}
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                "Continue"
+              )}
             </Button>
 
             <div className="text-center text-[#828282] text-sm mt-6">Or sign in with</div>
@@ -162,8 +148,6 @@ export default function SignInPage() {
               </button>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+    </AuthFormContainer>
   )
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState, Suspense } from "react"; // Import Suspense
 import { useSearchParams } from 'next/navigation'; // Import useSearchParams
 import { Input } from "@/components/ui/input"; // Import Input
@@ -9,9 +8,9 @@ import Link from "next/link"; // Import Link
 import { useRouter } from 'next/navigation'; // Import useRouter
 import { useAuth } from "@/contexts/auth-context"; // Import useAuth only (sampleUser not needed here)
 import { loginUser as apiLoginUser } from "@/lib/api/auth"; // Import the mock API function
-
-// TODO: Add logic for password visibility toggle if needed
-// import { Eye, EyeOff } from 'lucide-react';
+import AuthFormContainer from "@/components/auth-form-container"; // Import the new container
+import React from 'react'; // Import React for event types
+import { Eye, EyeOff, Loader2 } from 'lucide-react'; // Import icons
 
 // Define the form content as a separate component to easily wrap in Suspense
 const InputPasswordFormContent = () => {
@@ -21,14 +20,31 @@ const InputPasswordFormContent = () => {
   // const sampleUser = useSampleUser(); // Removed unused sample user
   const email = searchParams.get('email'); // Get email from URL query param
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // State for password visibility
   const [isLoading, setIsLoading] = useState(false); // Add loading state
-  const [error, setError] = useState<string | null>(null); // Add error state
-  // const [showPassword, setShowPassword] = useState(false); // State for password visibility
+  const [error, setError] = useState<string | null>(null); // General API error
+  const [errors, setErrors] = useState<Record<string, string>>({}); // Field-specific validation errors
 
-  // TODO: Implement actual sign-in logic with password verification
+  // Basic validation function
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (!password) {
+      newErrors.password = "Password is required.";
+    }
+    // Add more validation if needed
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
+
   const handleSignIn = async () => { // Make async
+    setError(null); // Clear previous general errors
+    setErrors({}); // Clear previous validation errors
+
+    if (!validateForm()) {
+      return; // Stop submission if validation fails
+    }
+
     setIsLoading(true); // Set loading true
-    setError(null); // Clear previous errors
     console.log("Signing in with:", email, password);
 
     // Call the mock API function (which now simulates triggering OTP send)
@@ -46,26 +62,11 @@ const InputPasswordFormContent = () => {
   };
 
   return (
-    <div className="w-full sm:w-1/2 flex flex-col justify-center items-center p-6 sm:p-14">
-      {/* Logo */}
-      <Image
-        src="/Images/logo.svg"
-        alt="roots n routes logo"
-        width={100}
-        height={50}
-        className="transition-transform duration-300 ease-out hover:scale-110 mb-5"
-      />
-      {/* Form Content Wrapper */}
-      <div className="w-full max-w-md">
-        {/* Heading */}
-        <h1 className="text-[#e09f3e] text-3xl font-medium mb-8 text-center">
-          Input your password
-        </h1>
-
-        {/* Form elements matching the image */}
-        <div className="space-y-6">
-          <div>
-            {/* Display Email */}
+    <AuthFormContainer title="Input your password">
+      {/* Form elements matching the image */}
+      <div className="space-y-6">
+        <div>
+          {/* Display Email */}
             {email && (
               <p className="block text-sm font-medium text-[#282828] mb-1 text-center">
                 {email}
@@ -75,24 +76,24 @@ const InputPasswordFormContent = () => {
             <div className="relative">
                <Input
                   id="password"
-                  type="password" // Use state for type if implementing show/hide
+                  type={showPassword ? "text" : "password"} // Dynamically set type
                   placeholder="Enter Password"
-                  className="w-full border-[#d9d9d9] pr-10" // Add padding for potential icon
+                  className={`w-full border-[#d9d9d9] pr-10 ${errors.password ? 'border-red-500' : ''}`} // Add padding for icon
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                />
-               {/* TODO: Add show/hide password icon button if needed
                <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                </button>
-               */}
             </div>
+            {errors.password && <p className="text-red-500 text-xs mt-1" aria-live="polite">{errors.password}</p>}
             {/* Forgot Password Link */}
-            <div className="text-right mt-2">
+            <div className="text-right mt-1"> {/* Reduced margin slightly */}
               <Link href="/auth/forgot-password" className="text-sm font-medium text-[#0e2f3c] hover:underline">
                 Forgot password?
               </Link>
@@ -105,47 +106,28 @@ const InputPasswordFormContent = () => {
             onClick={handleSignIn}
             disabled={isLoading} // Disable button while loading
           >
-            {isLoading ? 'Signing In...' : 'Sign In'}
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Signing In...
+              </>
+            ) : (
+              'Sign In'
+            )}
           </Button>
-          {/* Display error message if login fails */}
-          {error && <p className="text-red-500 text-sm text-center mt-2">{error}</p>}
+          {/* Display general API error message if login fails */}
+          {error && <p className="text-red-500 text-sm text-center mt-2" aria-live="assertive">{error}</p>}
         </div>
-      </div>
-    </div>
+    </AuthFormContainer>
   );
 };
 
 export default function InputPasswordPage() {
+  // The outer div and left panel are now handled by app/auth/layout.tsx
   return (
-    <div className="flex h-screen font-sans flex-col sm:flex-row">
-      {/* Left side - Consistent with other auth pages */}
-      <div className="w-full sm:w-1/2 relative hidden sm:block">
-        <Image
-          src="/Images/flightimage.png"
-          alt="Aerial view with world map"
-          fill
-          className="object-cover"
-        />
-        <Image
-          src="/Images/plane.png"
-          alt="plane"
-          width={800}
-          height={100}
-          className="absolute top-20 left-20 z-10"
-        />
-        <Image
-          src="/Images/logo2.png"
-          alt="roots n routes logo"
-          width={200}
-          height={50}
-          className="absolute bottom-10 right-14 z-10"
-        />
-      </div>
-
-      {/* Right side - Form wrapped in Suspense */}
-      <Suspense fallback={<div className="w-full sm:w-1/2 flex justify-center items-center"><p>Loading form...</p></div>}>
-        <InputPasswordFormContent />
-      </Suspense>
-    </div>
+    // Right side - Form wrapped in Suspense
+    <Suspense fallback={<div className="w-full sm:w-1/2 flex justify-center items-center"><p>Loading form...</p></div>}>
+      <InputPasswordFormContent />
+    </Suspense>
   );
 }

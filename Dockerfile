@@ -22,6 +22,14 @@ RUN ls -la /app/node_modules/next/dist/bin/ || echo "next/dist/bin directory NOT
 # Copy application code
 COPY . .
 
+# Declare build arguments
+ARG NEXT_PUBLIC_API_BASE_URL
+ARG NEXT_PUBLIC_USE_MOCK_API
+
+# Set build-time environment variables from ARGs
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_PUBLIC_USE_MOCK_API=$NEXT_PUBLIC_USE_MOCK_API
+
 # Build the Next.js application
 RUN pnpm build
 
@@ -43,8 +51,16 @@ COPY --from=builder /app/node_modules ./node_modules
 # Expose the port the app runs on (default for Next.js is 3000)
 EXPOSE 3000
 
+# Declare arguments again for the final stage (they don't persist across stages)
+ARG NEXT_PUBLIC_API_BASE_URL
+ARG NEXT_PUBLIC_USE_MOCK_API
+
 # Set environment variable for Node.js
-ENV NODE_ENV production
+ENV NODE_ENV=production
+
+# Set runtime environment variables from ARGs (these become the defaults if not overridden)
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_PUBLIC_USE_MOCK_API=$NEXT_PUBLIC_USE_MOCK_API
 
 # Command to run the application
 CMD ["pnpm", "start"]
