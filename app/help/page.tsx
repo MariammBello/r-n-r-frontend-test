@@ -9,7 +9,7 @@ export default function HelpPage() {
       <Header />
 
       {/* Main Content */}
-      <main className="w-[1440px] mx-auto px-[60px]">
+      <main className="w-full mx-auto px-[60px]">
         {/* Hero Section */}
         <section className="py-12">
           <h1 className="text-4xl font-bold text-[#0e2f3c] mb-4">Help Center</h1>

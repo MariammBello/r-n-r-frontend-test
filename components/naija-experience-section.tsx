@@ -7,6 +7,7 @@ import { useState, useEffect } from "react"; // Import hooks
 import { ExperienceType } from "@/types/accommodation"; // Import type (assuming it's in accommodation.ts)
 import { fetchExperienceTypes } from "@/lib/api/content"; // Import API function
 import { Skeleton } from "@/components/ui/skeleton"; // Import Skeleton
+import {ProtectedLink} from "@/components/protectedLink"
 
 export default function NaijaExperienceSection() {
   const [experiences, setExperiences] = useState<ExperienceType[]>([]);
@@ -35,12 +36,12 @@ export default function NaijaExperienceSection() {
         {/* Header with title and "See Experience" button */}
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-[#0e2f3c] text-4xl font-bold">Explore the Naija Experience</h2>
-          <Link
+          <ProtectedLink
             href="/experiences"
             className="px-6 py-3 bg-[#0e2f3c] text-white rounded-md font-medium hover:bg-[#0a2530] transition-colors"
           >
             See Experience
-          </Link>
+          </ProtectedLink>
         </div>
 
         {/* Experience types carousel */}

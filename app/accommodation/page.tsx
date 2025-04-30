@@ -182,7 +182,7 @@ function AccommodationPageContent() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <main className="w-[1440px] mx-auto px-[60px]">
+      <main className="w-full mx-auto px-[60px]">
         <Breadcrumb className="mt-12 pb-4">
           <BreadcrumbList>
             <BreadcrumbItem>

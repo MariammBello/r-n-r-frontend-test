@@ -27,7 +27,7 @@ export const fetchExperienceTypes = async (): Promise<ExperienceType[]> => {
     // --- Real API Logic ---
     console.log(`Using Real API for fetchExperienceTypes`);
     if (!API_BASE_URL) {
-      console.error("API_BASE_URL is not defined.");
+      // console.error("API_BASE_URL is not defined.");
       return [];
     }
     // Assuming an endpoint like /experiences?featured=true&limit=3
@@ -69,7 +69,7 @@ export const fetchBlogPosts = async (limit: number = 3): Promise<BlogPostSummary
     // --- Real API Logic ---
     console.log(`Using Real API for fetchBlogPosts (limit: ${limit})`);
     if (!API_BASE_URL) {
-      console.error("API_BASE_URL is not defined.");
+      // console.error("API_BASE_URL is not defined.");
       return [];
     }
     // Assuming an endpoint like /blog/posts?limit=3

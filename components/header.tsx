@@ -11,10 +11,13 @@ import {
   opportunityNavItems,
   type NavItem,
 } from "@/lib/navigationData";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/lib/api/Firebase/firebase";
+import {ProtectedLink} from "@/components/protectedLink"
 
 // Helper component for dropdown menu items
 const DropdownMenuItem = ({ item }: { item: NavItem }) => (
-  <Link
+  <ProtectedLink
     href={item.href}
     className="flex items-start space-x-4 hover:bg-gray-50 p-2 rounded-lg transition-colors"
   >
@@ -27,7 +30,7 @@ const DropdownMenuItem = ({ item }: { item: NavItem }) => (
       <h3 className="text-[#0e2f3c] font-bold text-lg">{item.title}</h3>
       <p className="text-[#4f4f4f] text-sm">{item.description}</p>
     </div>
-  </Link>
+  </ProtectedLink>
 );
 
 // Define props for the Header component
@@ -37,6 +40,8 @@ interface HeaderProps {
 
 export default function Header({ excludeNavItems = [] }: HeaderProps) { // Destructure props with default value
   const { isAuthenticated } = useAuth();
+  const [firebaseUser, firebaseLoading] = useAuthState(auth);
+
 
   // Helper function to check if a nav item should be rendered
   const shouldRenderNavItem = (title: string) => !excludeNavItems.includes(title);
@@ -67,8 +72,8 @@ export default function Header({ excludeNavItems = [] }: HeaderProps) { // Destr
                   className="fixed left-0 right-0 bg-white shadow-lg border-t border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50"
                   style={{ top: "77px" }}
                 >
-                  {/* Restored fixed width w-[1440px] to inner dropdown container */}
-                  <div className="mx-auto w-[1440px] px-[60px] py-6">
+                  {/* Restored fixed width w-full to inner dropdown container */}
+                  <div className="mx-auto w-full px-[60px] py-6">
                     <div className="grid grid-cols-2 gap-x-16 gap-y-8">
                       {solutionsNavItems.map((item) => (
                         // Add key prop directly here
@@ -93,8 +98,8 @@ export default function Header({ excludeNavItems = [] }: HeaderProps) { // Destr
                   className="fixed left-0 right-0 bg-white shadow-lg border-t border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50"
                   style={{ top: "77px" }}
                 >
-                  {/* Restored fixed width w-[1440px] to inner dropdown container */}
-                  <div className="mx-auto w-[1440px] px-[60px] py-6">
+                  {/* Restored fixed width w-full to inner dropdown container */}
+                  <div className="mx-auto w-full px-[60px] py-6">
                     <div className="grid grid-cols-2 gap-x-16 gap-y-8">
                       {resourcesNavItems.map((item) => (
                         // Add key prop directly here
@@ -119,8 +124,8 @@ export default function Header({ excludeNavItems = [] }: HeaderProps) { // Destr
                   className="fixed left-0 right-0 bg-white shadow-lg border-t border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50"
                   style={{ top: "77px" }}
                 >
-                  {/* Restored fixed width w-[1440px] to inner dropdown container */}
-                  <div className="mx-auto w-[1440px] px-[60px] py-6">
+                  {/* Restored fixed width w-full to inner dropdown container */}
+                  <div className="mx-auto w-full px-[60px] py-6">
                     <div className="grid grid-cols-2 gap-x-16 gap-y-8">
                       {opportunityNavItems.map((item) => (
                         // Add key prop directly here
@@ -147,7 +152,7 @@ export default function Header({ excludeNavItems = [] }: HeaderProps) { // Destr
             </Link>
 
             {/* Conditional rendering based on authentication state */}
-            {isAuthenticated ? (
+            {isAuthenticated || firebaseUser ? (
               <UserProfileButton />
             ) : (
               <Link href="/auth/login" className="flex items-center space-x-2"> {/* Updated path */}

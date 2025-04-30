@@ -7,6 +7,7 @@ import { ChevronRight, ChevronLeft } from "lucide-react" // Import ChevronLeft
 import { useState, useEffect } from "react" // Import hooks
 import { AccommodationType } from "@/types/accommodation" // Import the type
 import { accommodationTypes as mockAccommodationTypes } from "@/lib/mock-data/accommodationTypes" // Import mock data
+import { ProtectedLink } from "@/components/protectedLink" // Import ProtectedLink
 
 
 export default function AccommodationsSection() {
@@ -38,12 +39,13 @@ export default function AccommodationsSection() {
           <h2 className="text-[#0e2f3c] text-4xl font-bold">
             Find Your Perfect Accommodation
           </h2>
-          <Link
-            href="/accommodation"
-            className="px-6 py-3 bg-[#0e2f3c] text-white rounded-md font-medium hover:bg-[#0a2530] transition-colors"
-          >
-            See all listings
-          </Link>
+          <ProtectedLink
+  href="/accommodation"
+  className="px-6 py-3 bg-[#0e2f3c] text-white rounded-md font-medium hover:bg-[#0a2530] transition-colors"
+>
+  See all listings
+</ProtectedLink>
+
         </div>
 
         {/* Accommodation types carousel */}

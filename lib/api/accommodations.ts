@@ -92,7 +92,7 @@ export const fetchAccommodations = async (
     // --- Real API Logic ---
     console.log("Using Real API for fetchAccommodations");
     if (!API_BASE_URL) {
-      console.error("API_BASE_URL is not defined.");
+      // console.error("API_BASE_URL is not defined.");
       // Return an empty response or throw an error, depending on desired handling
       return { data: [], totalItems: 0, totalPages: 0, currentPage: 1 };
     }
@@ -148,7 +148,7 @@ export const fetchAccommodationById = async (
     // --- Real API Logic ---
     console.log(`Using Real API for fetchAccommodationById: ${id}`);
     if (!API_BASE_URL) {
-      console.error("API_BASE_URL is not defined.");
+      // console.error("API_BASE_URL is not defined.");
       return null;
     }
     const url = `${API_BASE_URL}/accommodations/${id}`; // Assuming endpoint '/accommodations/:id'
@@ -191,7 +191,7 @@ export const fetchReviewsByAccommodationId = async (
     // --- Real API Logic ---
     console.log(`Using Real API for fetchReviewsByAccommodationId: ${id}`);
      if (!API_BASE_URL) {
-      console.error("API_BASE_URL is not defined.");
+      // console.error("API_BASE_URL is not defined.");
       // Return default/empty structure matching ReviewsData
       return { overallRating: 0, totalReviews: 0, ratingBreakdown: [], individualReviews: [] };
     }
@@ -232,7 +232,7 @@ export const fetchPoliciesByAccommodationId = async (
     // --- Real API Logic ---
     console.log(`Using Real API for fetchPoliciesByAccommodationId: ${id}`);
     if (!API_BASE_URL) {
-      console.error("API_BASE_URL is not defined.");
+      // console.error("API_BASE_URL is not defined.");
       return [];
     }
     const url = `${API_BASE_URL}/accommodations/${id}/policies`; // Assuming endpoint '/accommodations/:id/policies'
@@ -272,7 +272,7 @@ export const fetchFaqsByAccommodationId = async (
     // --- Real API Logic ---
     console.log(`Using Real API for fetchFaqsByAccommodationId: ${id}`);
      if (!API_BASE_URL) {
-      console.error("API_BASE_URL is not defined.");
+      // console.error("API_BASE_URL is not defined.");
       return [];
     }
     const url = `${API_BASE_URL}/accommodations/${id}/faqs`; // Assuming endpoint '/accommodations/:id/faqs'
@@ -311,7 +311,7 @@ export const fetchFeaturedDestinations = async (): Promise<DestinationCity[]> =>
     // --- Real API Logic ---
     console.log(`Using Real API for fetchFeaturedDestinations`);
     if (!API_BASE_URL) {
-      console.error("API_BASE_URL is not defined.");
+      // console.error("API_BASE_URL is not defined.");
       return [];
     }
     // Assuming an endpoint like /destinations?featured=true&limit=3
@@ -353,7 +353,7 @@ export const fetchBundleDeals = async (): Promise<BundleDeal[]> => {
     // --- Real API Logic ---
     console.log(`Using Real API for fetchBundleDeals`);
     if (!API_BASE_URL) {
-      console.error("API_BASE_URL is not defined.");
+      // console.error("API_BASE_URL is not defined.");
       return [];
     }
     // Assuming an endpoint like /deals?featured=true

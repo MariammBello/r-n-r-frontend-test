@@ -27,7 +27,7 @@ export const fetchRecentlyViewed = async (): Promise<RecentlyViewedItem[]> => {
     // --- Real API Logic ---
     console.log(`Using Real API for fetchRecentlyViewed`);
     if (!API_BASE_URL) {
-      console.error("API_BASE_URL is not defined.");
+      // console.error("API_BASE_URL is not defined.");
       return [];
     }
     // Assuming an endpoint like /users/me/recently-viewed or similar

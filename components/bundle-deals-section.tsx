@@ -7,6 +7,7 @@ import { useState, useEffect } from "react"; // Import hooks
 import { BundleDeal } from "@/types/accommodation"; // Import type
 import { fetchBundleDeals } from "@/lib/api/accommodations"; // Import API function
 import { Skeleton } from "@/components/ui/skeleton"; // Import Skeleton
+import {ProtectedLink} from "@/components/protectedLink"
 
 // Helper to format price
 const formatPrice = (price: number) => {
@@ -49,12 +50,12 @@ export default function BundleDealsSection() {
         {/* Header with title and "See all deals" button */}
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-[#0e2f3c] text-3xl font-bold">Bundle Deals- Ovajara packages</h2>
-          <Link
+          <ProtectedLink
             href="/deals"
             className="px-6 py-3 bg-[#0e2f3c] text-white rounded-md font-medium hover:bg-[#0a2530] transition-colors"
           >
             See all deals
-          </Link>
+          </ProtectedLink>
         </div>
 
         {/* Date range info */}

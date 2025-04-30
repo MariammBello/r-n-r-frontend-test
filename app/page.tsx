@@ -44,7 +44,7 @@ export default function LandingPage() {
       {/* Viewed Recently */}
       {isAuthenticated && <ViewedRecently />}
 
-      {/* Destinations Section */}
+      {/* Destinations Section */}  
       <DestinationsSection />
 
       {/* Booking Section - Wrapped in Suspense */}
