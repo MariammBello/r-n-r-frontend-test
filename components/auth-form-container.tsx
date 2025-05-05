@@ -11,7 +11,7 @@ const AuthFormContainer: React.FC<AuthFormContainerProps> = ({ title, children }
     <div className="w-full sm:w-1/2 flex flex-col justify-center items-center p-6 sm:p-14">
       {/* Logo */}
       <Image
-        src="/Images/logo.svg"
+        src="/images/logo.svg" // Corrected path casing
         alt="roots n routes logo"
         width={100}
         height={50}
