@@ -4,6 +4,8 @@ import { Construction } from 'lucide-react';
 
 interface WorkInProgressProps {
   pageName?: string; // Optional prop to specify which page is WIP
+  title: string;
+  description: string;
 }
 
 export default function WorkInProgress({ pageName }: WorkInProgressProps) {
